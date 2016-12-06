@@ -1,0 +1,26 @@
+{
+  "name": "free_poll_server",
+  "version": "0.0.1",
+  "description": "free poll server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gincheong/free_poll_server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gincheong/free_poll_server/issues"
+  },
+  "homepage": "https://github.com/gincheong/free_poll_server#readme",
+  "dependencies": {
+    "cors": "^2.8.1",
+    "express": "^4.14.0",
+    "mysql": "^2.12.0",
+    "sequelize": "^3.27.0",
+    "supervisor": "^0.12.0"
+  }
+}
