@@ -6,7 +6,7 @@ var app = express();
 var sequelize = new Sequelize('mysql://b9fb99c87cbebe:64b9ddde@us-cdbr-iron-east-04.cleardb.net/heroku_74f00feb4343db4');
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const Poll = sequelize.define('polls', {
 	id: {
@@ -57,7 +57,14 @@ app.get('/my_polls', function(req, res) {
 });
 
 app.post('/my_polls', function(req, res) {
-	console.log(req.body.name);
+	Poll.create({
+		name: req.body.name,
+		description: req.body.description,
+		from_date: req.body.from_date,
+		to_date: req.body.to_date
+	}).then(function() {
+		res.send(true);
+	});
 });
 
 app.get('/menus', function(req, res) {
