@@ -69,8 +69,11 @@ app.post('/my_polls', function(req, res) {
 
 app.get('/menus', function(req, res) {
 	Menu.findAll().then(function(items) {
+		items.sort(function(prev, next) {
+			return prev.rank < next.rank ? -1 : prev.rank > next.rank ? 1 : 0;
+		})
 		res.send(items);
-	});
+	});	
 });
 
 app.listen(3000, function() {
