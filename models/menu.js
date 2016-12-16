@@ -1,4 +1,4 @@
-module.export(function() {
+module.exports = function(sequelize, Sequelize) {
 	const Menu = sequelize.define('menus', {
 		rank: {
 			type: Sequelize.INTEGER,
@@ -11,7 +11,8 @@ module.export(function() {
 			type: Sequelize.STRING
 		}
 	}, {
-		timestamps: false
-	});	
-})
+		timestamps: false		
+	});
 
+	return Menu;
+};
