@@ -17,5 +17,6 @@ const db = {
 
 // Model List
 db.Menu = require('../models/Menu.js')(sequelize, Sequelize);
+db.Poll = require('../models/Poll.js')(sequelize, Sequelize);
 
 module.exports = db;

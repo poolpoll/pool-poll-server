@@ -1,21 +1,30 @@
 module.exports = function(sequelize, Sequelize) {
-	const Menu = sequelize.define('menus', {
+	const Poll = sequelize.define('polls', {
 		id: {
 			type: Sequelize.INTEGER,
 			primaryKey: true
 		},
-		rank: {
-			type: Sequelize.INTEGER
-		},
 		name: {
 			type: Sequelize.STRING
 		},
-		url: {
+		description: {
 			type: Sequelize.STRING
+		},
+		user_id: {
+			type: Sequelize.INTEGER
+		},
+		from_date: {
+			type: Sequelize.STRING
+		},
+		to_date: {
+			type: Sequelize.STRING
+		},
+		count: {
+			type: Sequelize.INTEGER
 		}
 	}, {
 		timestamps: false		
 	});
 
-	return Menu;
+	return Poll;
 };
