@@ -1,3 +1,6 @@
+/**
+ * Menu Model
+ */
 module.exports = function(sequelize, Sequelize) {
 	const Menu = sequelize.define('menus', {
 		id: {

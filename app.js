@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var db = require('./config/db.js');
 var menuController = require('./controllers/menuController')(app, db);
 var pollController = require('./controllers/pollController')(app, db);
+var authController = require('./controllers/authController')(app, db);
 
 /**
  * Custom Module Attache Section

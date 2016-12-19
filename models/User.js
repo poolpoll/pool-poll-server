@@ -1,33 +1,36 @@
 /**
- * Poll Model
+ * User Model
  */
 module.exports = function(sequelize, Sequelize) {
-	const Poll = sequelize.define('polls', {
+	const User = sequelize.define('users', {
 		id: {
 			type: Sequelize.INTEGER,
 			primaryKey: true
 		},
+		account: {
+			type: Sequelize.STRING
+		},
 		name: {
 			type: Sequelize.STRING
 		},
-		description: {
+		email: {
 			type: Sequelize.STRING
 		},
-		user_id: {
-			type: Sequelize.INTEGER
-		},
-		from_date: {
+		birth_date: {
 			type: Sequelize.STRING
 		},
-		to_date: {
+		gender: {
 			type: Sequelize.STRING
 		},
-		count: {
-			type: Sequelize.INTEGER
+		favorite_categories: {
+			type: Sequelize.STRING
+		},
+		encrypted_password: {
+			type: Sequelize.STRING
 		}
 	}, {
 		timestamps: false		
 	});
 
-	return Poll;
+	return User;
 };
