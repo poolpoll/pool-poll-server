@@ -5,11 +5,25 @@
 const AuthUtil = require('../utills/AuthUtill.js');
 
 module.exports = function(app, db) {
-	app.get('/users', function(req, res) {
-		db.User.findAll().then(function(users) {
-			res.send(users);
-		}) 
-	});
+	app.post('/auth/sign_in', function(req, res) {
+		var body = req.body;
+		var account = body.account;
+		var rawPwd = body.password;
+		var encrypted_password = AuthUtil.encryptPassword(rawPwd);
+
+		db.User.find({
+			where: {
+				account: account
+			}
+		}).then(function(user) {
+			console.log(user);
+			if(user && user.encrypted_password === encrypted_password) {
+				res.send(true);
+			} else {
+				res.send(false);
+			}
+		})
+	})
 
 	app.post('/auth/sign_up', function(req, res) {
 		var body = req.body;

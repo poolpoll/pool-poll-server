@@ -13,7 +13,10 @@ module.exports = function(sequelize, Sequelize) {
 		name: {
 			type: Sequelize.STRING
 		},
-		url: {
+		description: {
+			type: Sequelize.STRING
+		},
+		route: {
 			type: Sequelize.STRING
 		}
 	}, {
