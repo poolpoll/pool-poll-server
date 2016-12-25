@@ -16,7 +16,6 @@ module.exports = function(app, db) {
 				account: account
 			}
 		}).then(function(user) {
-			console.log(user);
 			if(user && user.encrypted_password === encrypted_password) {
 				res.send(true);
 			} else {
