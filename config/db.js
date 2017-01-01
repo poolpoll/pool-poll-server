@@ -18,6 +18,7 @@ const db = {
 // Model List
 db.Menu = require('../models/Menu.js')(sequelize, Sequelize);
 db.Poll = require('../models/Poll.js')(sequelize, Sequelize);
+db.Option = require('../models/Option.js')(sequelize, Sequelize);
 db.User = require('../models/User.js')(sequelize, Sequelize);
 db.Category = require('../models/Category.js')(sequelize, Sequelize);
 

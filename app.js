@@ -3,6 +3,7 @@
  */
 var express = require('express');
 var cors = require('cors');
+var session = require('express-session');
 var app = express();
 var bodyParser = require('body-parser');
 
@@ -11,6 +12,11 @@ var bodyParser = require('body-parser');
  */
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+	secret: '시크릿중 탑은 길라임 시크릿 가든',
+	resave: false,
+	saveUninitialized: true
+}))
 
 /**
  * Custom Modules

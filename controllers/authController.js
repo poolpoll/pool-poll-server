@@ -17,6 +17,7 @@ module.exports = function(app, db) {
 			}
 		}).then(function(user) {
 			if(user && user.encrypted_password === encrypted_password) {
+				req.session.user_info = user.id;
 				res.send(true);
 			} else {
 				res.send(false);
@@ -38,7 +39,8 @@ module.exports = function(app, db) {
 		}).then(function() {
 			res.send(true);
 		}, function() {
-			console.log('falied');
+			console.log('Sign up faield.')
+			res.send(false);
 		})
 	})
 }
