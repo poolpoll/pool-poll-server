@@ -6,7 +6,7 @@ module.exports = function(app, db) {
 		db.Menu.findAll().then(function(menus) {
 			menus.sort(function(prev, next) {
 				return prev.rank < next.rank ? -1 : prev.rank > next.rank ? 1 : 0;
-			})
+			});
 
 			res.send(menus);
 		})

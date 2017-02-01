@@ -17,13 +17,15 @@ module.exports = function(app, db) {
 			}
 		}).then(function(user) {
 			if(user && user.encrypted_password === encrypted_password) {
-				req.session.user_info = user.id;
+				req.session.user_id = user.id;
+				console.log('userid', user.id);
+				console.log('session', req.session.user_id);
 				res.send(true);
 			} else {
 				res.send(false);
 			}
 		})
-	})
+	});
 
 	app.post('/auth/sign_up', function(req, res) {
 		var body = req.body;
@@ -42,5 +44,14 @@ module.exports = function(app, db) {
 			console.log('Sign up faield.')
 			res.send(false);
 		})
-	})
+	});
+
+	app.get('/auth/check_session', function(req, res) {
+		var sessionInfoObj = {
+			session: req.session,
+			user_id: req.session.user_id
+		};
+
+		res.send(JSON.stringify(sessionInfoObj));
+	});
 }
