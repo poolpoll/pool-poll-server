@@ -2,8 +2,12 @@ var sha256 = require('sha256');
 
 
 var AuthUtll = {
-	encryptPassword: function(pwd) {
-		var salt = '아이 짜구워';
+
+	generateSalt: function() {
+		return sha256(JSON.stringify(new Date()));
+	},
+
+	encryptPassword: function(pwd, salt) {
 		return sha256(salt + pwd);
 	}
 }

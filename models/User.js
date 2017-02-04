@@ -27,6 +27,12 @@ module.exports = function(sequelize, Sequelize) {
 		},
 		encrypted_password: {
 			type: Sequelize.STRING
+		},
+		salt: {
+			type: Sequelize.STRING
+		},
+		sign_up_date: {
+			type: Sequelize.STRING
 		}
 	}, {
 		timestamps: false		

@@ -3,41 +3,27 @@
  */
 
 const AuthUtil = require('../utills/AuthUtill.js');
+const DateTimeUtill = require('../utills/DateTimeUtill.js');
 
 module.exports = function(app, db) {
 	app.post('/auth/sign_in', function(req, res) {
-		var body = req.body;
-		var account = body.account;
-		var rawPwd = body.password;
-		var encrypted_password = AuthUtil.encryptPassword(rawPwd);
-
-		db.User.find({
-			where: {
-				account: account
-			}
-		}).then(function(user) {
-			if(user && user.encrypted_password === encrypted_password) {
-				req.session.user_id = user.id;
-				console.log('userid', user.id);
-				console.log('session', req.session.user_id);
-				res.send(true);
-			} else {
-				res.send(false);
-			}
-		})
+		console.log('Sign in success');
 	});
 
 	app.post('/auth/sign_up', function(req, res) {
 		var body = req.body;
 		var rawPwd = body.password;
-
-		var encrypted_password = AuthUtil.encryptPassword(rawPwd);
+		var salt = AuthUtil.generateSalt();
+		var encrypted_password = AuthUtil.encryptPassword(rawPwd, salt);
+		var signUpDate = DateTimeUtill.getDateTime();
 
 		db.User.create({
 			account: body.account,
 			name: body.name,
 			encrypted_password: encrypted_password,
-			email: body.email
+			salt: salt,
+			email: body.email,
+			sign_up_date: signUpDate
 		}).then(function() {
 			res.send(true);
 		}, function() {
