@@ -31,13 +31,4 @@ module.exports = function(app, db) {
 			res.send(false);
 		})
 	});
-
-	app.get('/auth/check_session', function(req, res) {
-		var sessionInfoObj = {
-			session: req.session,
-			user_id: req.session.user_id
-		};
-
-		res.send(JSON.stringify(sessionInfoObj));
-	});
 }

@@ -24,6 +24,9 @@ module.exports = function(sequelize, Sequelize) {
 		},
 		count: {
 			type: Sequelize.INTEGER
+		},
+		active_flag: {
+			type: Sequelize.BOOLEAN
 		}
 	}, {
 		timestamps: false		

@@ -1,13 +1,13 @@
 /**
- * Option Model
+ * OptionDetail Model
  */
 module.exports = function(sequelize, Sequelize) {
-	const Option = sequelize.define('options', {
+	const OptionDetail = sequelize.define('option_details', {
 		id: {
 			type: Sequelize.INTEGER,
 			primaryKey: true
 		},
-		poll_id: {
+		option_id: {
 			type: Sequelize.INTEGER
 		},
 		name: {
@@ -17,5 +17,5 @@ module.exports = function(sequelize, Sequelize) {
 		timestamps: false
 	});
 
-	return Option;
+	return OptionDetail;
 };

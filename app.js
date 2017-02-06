@@ -40,7 +40,7 @@ app.use(cookieParser());
 var db = require('./config/db.js');
 var requestFilter = require('./filters/requestFilter')(app, db);
 var menuController = require('./controllers/menuController')(app, db);
-// var pollController = require('./controllers/pollController')(app, db);
+var pollController = require('./controllers/pollController')(app, db);
 var authController = require('./controllers/authController')(app, db);
 var categoryController = require('./controllers/categoryController')(app, db);
 
