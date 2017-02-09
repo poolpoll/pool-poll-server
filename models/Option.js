@@ -3,15 +3,13 @@
  */
 module.exports = function(sequelize, Sequelize) {
 	const Option = sequelize.define('options', {
-		id: {
+		pollId: {
 			type: Sequelize.INTEGER,
-			primaryKey: true
-		},
-		poll_id: {
-			type: Sequelize.INTEGER
+			allowNull: false
 		},
 		name: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255),
+			allowNull: false
 		}
 	}, {
 		timestamps: false

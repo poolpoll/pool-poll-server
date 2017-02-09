@@ -3,33 +3,31 @@
  */
 module.exports = function(sequelize, Sequelize) {
 	const Poll = sequelize.define('polls', {
-		id: {
-			type: Sequelize.INTEGER,
-			primaryKey: true
-		},
 		name: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255),
+			allowNull: false
 		},
 		description: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255),
 		},
-		user_id: {
-			type: Sequelize.INTEGER
+		userId: {
+			type: Sequelize.INTEGER,
+			allowNull: false
 		},
-		from_date: {
-			type: Sequelize.STRING
+		fromDate: {
+			type: Sequelize.STRING(12)
 		},
-		to_date: {
-			type: Sequelize.STRING
+		toDate: {
+			type: Sequelize.STRING(12)
 		},
 		count: {
-			type: Sequelize.INTEGER
+			type: Sequelize.INTEGER,
+			defaultValue: 0
 		},
-		active_flag: {
-			type: Sequelize.BOOLEAN
+		activeFlag: {
+			type: Sequelize.BOOLEAN,
+			defaultValue: false
 		}
-	}, {
-		timestamps: false		
 	});
 
 	return Poll;

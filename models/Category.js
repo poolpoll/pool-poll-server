@@ -3,24 +3,23 @@
  */
 module.exports = function(sequelize, Sequelize) {
 	const Category = sequelize.define('categories', {
-		id: {
-			type: Sequelize.INTEGER,
-			primaryKey: true
-		},
 		name: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(64)
 		},
 		description: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255)
 		},
-		user_count: {
+		userCount: {
 			type: Sequelize.INTEGER
 		},
-		poll_count: {
+		pollCount: {
 			type: Sequelize.INTEGER
 		}
 	}, {
-		timestamps: false
+		indexes: [{
+			unique: true,
+			fields: [ 'name' ]
+		}]
 	});
 
 	return Category;

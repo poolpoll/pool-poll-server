@@ -6,7 +6,7 @@ const AuthUtill = require('../utills/AuthUtill.js');
 
 module.exports = function(app, db) {
 	app.all('/*', function(req, res, next) {
-		if(req.session.user_id) {
+		if(req.session.userId) {
 			next();
 		} else if (req.url == '/auth/sign_in') {
 			var body = req.body;
@@ -21,8 +21,8 @@ module.exports = function(app, db) {
 				var salt = user.salt;
 				var encryptedPassword = AuthUtill.encryptPassword(rawPwd, salt);
 
-				if(user && user.encrypted_password === encryptedPassword) {
-					req.session.user_id = user.id;
+				if(user && user.encryptedPassword === encryptedPassword) {
+					req.session.userId = user.id;
 					res.send(true);
 				} else {
 					res.send(false);

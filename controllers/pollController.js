@@ -11,7 +11,7 @@ module.exports = function(app, db) {
 	app.get('/polls/my_polls', function(req, res) {
 		db.Poll.findAll({
 			where: {
-				user_id: req.session.user_id
+				userId: req.session.userId
 			}
 		}).then(function(polls) {
 			res.send(polls);
@@ -25,14 +25,14 @@ module.exports = function(app, db) {
 		db.Poll.create({
 			name: basicInfo.name,
 			description: basicInfo.description,
-			user_id: req.session.user_id,
-			from_date: basicInfo.fromDate,
-			to_date: basicInfo.toDate
+			userId: req.session.userId,
+			fromDate: basicInfo.fromDate,
+			toDate: basicInfo.toDate
 		}).then(function(poll) {
 			db.Poll.find({
 				where: {
 					name: basicInfo.name,
-					user_id: req.session.user_id,
+					userId: req.session.userId,
 				}
 			}).then(function(poll) {
 				var pollId = poll.id;

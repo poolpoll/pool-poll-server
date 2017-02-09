@@ -6,8 +6,9 @@ const sequelize = new Sequelize(CONF.DB.DATABASE, CONF.DB.USER, CONF.DB.PASSWORD
 	port: CONF.DB.PORT,
 	dialect: CONF.DB.DIALECT,
 	define: {
-		underscored: true
-	}
+	    charset: 'utf8',
+    	collate: 'utf8_general_ci'		
+	}	
 });
 
 const db = {

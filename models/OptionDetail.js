@@ -3,15 +3,13 @@
  */
 module.exports = function(sequelize, Sequelize) {
 	const OptionDetail = sequelize.define('option_details', {
-		id: {
+		optionId: {
 			type: Sequelize.INTEGER,
-			primaryKey: true
-		},
-		option_id: {
-			type: Sequelize.INTEGER
+			allowNull: false
 		},
 		name: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255),
+			allowNull: false
 		}
 	}, {
 		timestamps: false
