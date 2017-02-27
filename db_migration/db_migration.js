@@ -143,6 +143,4 @@ const OPTION_DETAIL = sequelize.define('option_details', {
 	timestamps: false
 });
 
-sequelize.sync({
-	force: true
-});
+sequelize.sync();
