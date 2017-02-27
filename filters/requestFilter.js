@@ -23,7 +23,17 @@ module.exports = function(app, db) {
 
 				if(user && user.encryptedPassword === encryptedPassword) {
 					req.session.userId = user.id;
-					res.send(true);
+
+					var userInfo = {
+						id: user.id,
+						name: user.name,
+						email: user.email,
+						birthDate: user.birthDate,
+						gender: user.gender,
+						favoriteCategories: user.favoriteCategories
+					};
+
+					res.send(userInfo);
 				} else {
 					res.send(false);
 				}
