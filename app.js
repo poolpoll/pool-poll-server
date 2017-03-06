@@ -30,6 +30,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use(bodyParser.json({ extended: false}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
@@ -43,6 +44,7 @@ var menuController = require('./controllers/menuController')(app, db);
 var pollController = require('./controllers/pollController')(app, db);
 var authController = require('./controllers/authController')(app, db);
 var userController = require('./controllers/userController')(app, db);
+var userCategoryController = require('./controllers/userCategoryController')(app, db);
 var categoryController = require('./controllers/categoryController')(app, db);
 
 /**
