@@ -9,6 +9,7 @@ module.exports = function(app, db) {
 		if(req.session.userId) {
 			next();
 		} else if (req.url == '/auth/sign_in') {
+			console.log("body", body);
 			var body = req.body;
 			var account = body.account;
 			var rawPwd = body.password;
@@ -18,6 +19,7 @@ module.exports = function(app, db) {
 					account: account
 				}
 			}).then(function(user) {
+				console.log('users', user);
 				var salt = user.salt;
 				var encryptedPassword = AuthUtill.encryptPassword(rawPwd, salt);
 
@@ -29,8 +31,7 @@ module.exports = function(app, db) {
 						name: user.name,
 						email: user.email,
 						birthDate: user.birthDate,
-						gender: user.gender,
-						favoriteCategories: user.favoriteCategories
+						gender: user.gender
 					};
 
 					res.send(userInfo);

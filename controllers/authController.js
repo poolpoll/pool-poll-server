@@ -14,11 +14,10 @@ module.exports = function(app, db) {
 		var rawPwd = data.password;
 		var salt = AuthUtil.generateSalt();
 		var encryptedPassword = AuthUtil.encryptPassword(rawPwd, salt);
-		
+
 		data.encryptedPassword = encryptedPassword;
 		data.salt = salt;
 		
-
 		db.User.create(data).then(function() {
 			res.send(true);
 		}, function(e) {

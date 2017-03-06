@@ -23,12 +23,4 @@ module.exports = function(app, db) {
 			res.send(user);
 		})
 	});
-
-	app.post('/users/categories/:id', function(req, res) {
-		db.User.update({
-			favoriteCategories: req.body.favoriteCategories
-		}, {
-			where: req.params
-		})
-	})
 };

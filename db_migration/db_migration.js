@@ -30,9 +30,6 @@ const USER = sequelize.define('users', {
 	gender: {
 		type: Sequelize.STRING(20)
 	},
-	favoriteCategories: {
-		type: Sequelize.STRING(255)
-	},
 	encryptedPassword: {
 		type: Sequelize.STRING(255),
 		allowNull: false
@@ -46,6 +43,22 @@ const USER = sequelize.define('users', {
 		unique: true,
 		fields: [ 'name', 'account', 'email' ]
 	}]
+});
+
+const USER_CATEGORY = sequelize.define('user_categories', {
+	userId: {
+		type: Sequelize.INTEGER
+	},
+	categoryId: {
+		type: Sequelize.INTEGER
+	}
+}, {
+  timestamps: false
+}, {
+  indexes: [{
+    unique: true,
+    fields: [ 'user_id', 'category_id']
+  }]
 });
 
 const CATEGORY = sequelize.define('categories', {

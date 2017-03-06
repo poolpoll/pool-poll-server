@@ -21,9 +21,6 @@ module.exports = function(sequelize, Sequelize) {
 		gender: {
 			type: Sequelize.STRING(20)
 		},
-		favoriteCategories: {
-			type: Sequelize.STRING(255)
-		},
 		encryptedPassword: {
 			type: Sequelize.STRING(255),
 			allowNull: false

@@ -7,8 +7,8 @@ const sequelize = new Sequelize(CONF.DB.DATABASE, CONF.DB.USER, CONF.DB.PASSWORD
 	dialect: CONF.DB.DIALECT,
 	define: {
 	    charset: 'utf8',
-    	collate: 'utf8_general_ci'		
-	}	
+    	collate: 'utf8_general_ci'
+	}
 });
 
 const db = {
@@ -22,6 +22,7 @@ db.Poll = require('../models/Poll.js')(sequelize, Sequelize);
 db.Option = require('../models/Option.js')(sequelize, Sequelize);
 db.OptionDetail = require('../models/OptionDetail.js')(sequelize, Sequelize);
 db.User = require('../models/User.js')(sequelize, Sequelize);
+db.UserCategory = require('../models/UserCategory.js')(sequelize, Sequelize);
 db.Category = require('../models/Category.js')(sequelize, Sequelize);
 
 module.exports = db;
