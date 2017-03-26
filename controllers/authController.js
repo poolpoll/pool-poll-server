@@ -2,11 +2,37 @@
  * Auth Controller
  */
 
-const AuthUtil = require('../utills/AuthUtill.js');
+const AuthUtil = require('../utils/AuthUtil.js');
 
 module.exports = function(app, db) {
 	app.post('/auth/sign_in', function(req, res) {
-		console.log('Sign in success');
+		var body = req.body;
+		var account = body.account;
+		var rawPwd = body.password;
+
+		db.User.find({
+			where: {
+				account: account
+			}
+		}).then(function(user) {
+			var encryptPassword = AuthUtil.encryptPassword(rawPwd, user.salt);
+
+			if(user && user.encryptedPassword === encryptPassword) {
+				req.session.userId = user.id;
+				var userInfo = {
+					id: user.id,
+					name: user.name,
+					email: user.email,
+					birthDate: user.birthDate,
+					gender: user.gender
+				};
+
+				res.send(userInfo);
+
+			} else {
+				res.send(false);
+			}
+		})
 	});
 
 	app.post('/auth/sign_up', function(req, res) {
@@ -17,7 +43,7 @@ module.exports = function(app, db) {
 
 		data.encryptedPassword = encryptedPassword;
 		data.salt = salt;
-		
+
 		db.User.create(data).then(function() {
 			res.send(true);
 		}, function(e) {

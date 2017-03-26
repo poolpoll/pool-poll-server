@@ -1,7 +1,7 @@
 var sha256 = require('sha256');
 
 
-var AuthUtll = {
+var AuthUtil = {
 
 	generateSalt: function() {
 		return sha256(JSON.stringify(new Date()));
@@ -12,4 +12,4 @@ var AuthUtll = {
 	}
 }
 
-module.exports = AuthUtll;
+module.exports = AuthUtil;

@@ -11,20 +11,24 @@ const sequelize = new Sequelize(CONF.DB.DATABASE, CONF.DB.USER, CONF.DB.PASSWORD
 	}
 });
 
-const USER_CATEGORY = sequelize.define('user_categories', {
-	userId: {
-		type: Sequelize.INTEGER
+const OPTION = sequelize.define('options', {
+	questionId: {
+		type: Sequelize.INTEGER,
+		allowNull: false
 	},
-	categoryId: {
-		type: Sequelize.INTEGER
-	}
+	name: {
+		type: Sequelize.STRING(255),
+		allowNull: false
+	},
+  count: {
+    type: Sequelize.INTEGER
+  }
 }, {
-  timestamps: false
-}, {
-  indexes: [{
-    unique: true,
-    fields: [ 'userId', 'categoryId']
-  }]
+	timestamps: false,
+	indexes: [{
+		unique: true,
+		fields: [ 'questionId', 'name' ]
+	}]
 });
 
 sequelize.sync({

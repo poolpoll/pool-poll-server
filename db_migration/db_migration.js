@@ -57,7 +57,7 @@ const USER_CATEGORY = sequelize.define('user_categories', {
 }, {
   indexes: [{
     unique: true,
-    fields: [ 'user_id', 'category_id']
+    fields: [ 'userId', 'categoryId']
   }]
 });
 
@@ -110,6 +110,9 @@ const POLL = sequelize.define('polls', {
 	description: {
 		type: Sequelize.STRING(255),
 	},
+	categoryId: {
+		type: Sequelize.INTEGER,
+	},
 	userId: {
 		type: Sequelize.INTEGER,
 		allowNull: false
@@ -128,32 +131,48 @@ const POLL = sequelize.define('polls', {
 		type: Sequelize.BOOLEAN,
 		defaultValue: false
 	}
+}, {
+	indexes: [{
+		unique: true,
+		fields: [ 'userId', 'name' ]
+	}]
 });
 
-const OPTION = sequelize.define('options', {
+const QUESTION = sequelize.define('questions', {
 	pollId: {
 		type: Sequelize.INTEGER,
 		allowNull: false
 	},
 	name: {
-		type: Sequelize.STRING(255),
+		type: Sequelize.STRING(64),
 		allowNull: false
 	}
 }, {
-	timestamps: false
+	timestamps: false,
+	indexes: [{
+		unique: true,
+		fields: [ 'pollId', 'name' ]
+	}]
 });
 
-const OPTION_DETAIL = sequelize.define('option_details', {
-	optionId: {
+const OPTION = sequelize.define('options', {
+	questionId: {
 		type: Sequelize.INTEGER,
 		allowNull: false
 	},
 	name: {
 		type: Sequelize.STRING(255),
 		allowNull: false
-	}
+	},
+  count: {
+    type: Sequelize.INTEGER
+  }
 }, {
-	timestamps: false
+	timestamps: false,
+	indexes: [{
+		unique: true,
+		fields: [ 'questionId', 'name' ]
+	}]
 });
 
 sequelize.sync();

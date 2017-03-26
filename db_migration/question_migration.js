@@ -11,20 +11,21 @@ const sequelize = new Sequelize(CONF.DB.DATABASE, CONF.DB.USER, CONF.DB.PASSWORD
 	}
 });
 
-const USER_CATEGORY = sequelize.define('user_categories', {
-	userId: {
-		type: Sequelize.INTEGER
+const QUESTION = sequelize.define('questions', {
+	pollId: {
+		type: Sequelize.INTEGER,
+		allowNull: false
 	},
-	categoryId: {
-		type: Sequelize.INTEGER
+	name: {
+		type: Sequelize.STRING(64),
+		allowNull: false
 	}
 }, {
-  timestamps: false
-}, {
-  indexes: [{
-    unique: true,
-    fields: [ 'userId', 'categoryId']
-  }]
+	timestamps: false,
+	indexes: [{
+		unique: true,
+		fields: [ 'pollId', 'name' ]
+	}]
 });
 
 sequelize.sync({

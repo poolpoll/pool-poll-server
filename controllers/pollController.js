@@ -7,7 +7,7 @@ module.exports = function(app, db) {
 			res.send(polls);
 		})
 	}),
-	
+
 	app.get('/polls/my_polls', function(req, res) {
 		db.Poll.findAll({
 			where: {
@@ -16,51 +16,52 @@ module.exports = function(app, db) {
 		}).then(function(polls) {
 			res.send(polls);
 		})
-	})
+	}),
 
 	app.post('/polls/regist', function(req, res) {
-		var basicInfo = JSON.parse(req.body.basic_info);
-		var questionList = JSON.parse(req.body.question_list);
+	  db.Poll.create({
+	    name: req.body.name,
+	    categoryId: req.body.categoryId,
+	    description: req.body.description,
+	    userId: req.session.userId,
+	    fromDate: req.body.fromDate,
+	    toDate: req.body.toDate
+	  }).then(function(poll) {
+	    db.Poll.find({
+	      where: { name: req.body.name, userId: req.session.userId }
+	    }).then(function(poll) {
+	      var pollId = poll.id;
+	      req.body.questionList.forEach(function(questionItem) {
+	        db.Question.create({
+	          pollId: pollId,
+	          name: questionItem.question
+	        }).then(function(question) {
+	          db.Question.find({
+	            where: { pollId: pollId, name: question.name }
+	          }).then(function(item) {
+	            var questionId = item.id;
+	            var optionList = [];
+	            questionItem.options.forEach(function(option) {
+	              var tempOption = { questionId: questionId, name: option };
+	              optionList.push(tempOption);
+	            });
 
-		db.Poll.create({
-			name: basicInfo.name,
-			description: basicInfo.description,
-			userId: req.session.userId,
-			fromDate: basicInfo.fromDate,
-			toDate: basicInfo.toDate
-		}).then(function(poll) {
-			db.Poll.find({
-				where: {
-					name: basicInfo.name,
-					userId: req.session.userId,
-				}
-			}).then(function(poll) {
-				var pollId = poll.id;
-
-				questionList.forEach(function(question) {
-					db.Option.create({
-						name: question.name,
-						poll_id: pollId
-					}).then(function(option) {
-						db.Option.find({
-							where: {
-								name: question.name,
-								poll_id: pollId
-							}
-						}).then(function(option) {
-							var optionId = option.id;
-
-							question.options.forEach(function(option) {
-								db.OptionDetail.create({
-									name: option.option,
-									option_id: optionId
-								})
-							})
-						})
-					})
-				})
-			})
-			res.send(true);
-		})
+	            db.Option.bulkCreate(optionList).then(function() {
+	              res.send(true);
+	            }, function(error) {
+	              console.error(error);
+	              res.send(false);
+	            })
+	          })
+	        }, function(error) {
+	          console.error(error);
+	          res.send(false);
+	        })
+	      })
+	    })
+	  }, function(error) {
+	    console.error(error);
+	    res.send(false);
+	  })
 	})
 };
