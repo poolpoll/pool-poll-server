@@ -2,9 +2,18 @@
  * Poll Controller
  */
 module.exports = function(app, db) {
-	app.get('/polls', function(req, res) {
-		db.Poll.findAll().then(function(polls) {
+	app.get('/polls', (req, res) => {
+		var condition = {};
+		if(req.query.name) condition.name = { '$like': '%' + req.query.name + '%'	};
+		if(req.query.categoryId) condition.categoryId = req.query.categoryId;
+
+		db.Poll.findAll({
+			where: condition
+		}).then(polls => {
 			res.send(polls);
+		}).catch(error => {
+			console.error(error);
+			res.send(false);
 		})
 	}),
 
@@ -18,7 +27,18 @@ module.exports = function(app, db) {
 		})
 	}),
 
-	app.post('/polls/regist', function(req, res) {
+	app.get('/polls/:id', function(req, res) {
+		db.Poll.find({
+			where: req.params
+		}).then(function(poll) {
+			res.send(poll);
+		}, function(error) {
+			console.error(error);
+			res.send(error);
+		})
+	}),
+
+	app.post('/polls/regist', (req, res) => {
 	  db.Poll.create({
 	    name: req.body.name,
 	    categoryId: req.body.categoryId,
@@ -26,19 +46,19 @@ module.exports = function(app, db) {
 	    userId: req.session.userId,
 	    fromDate: req.body.fromDate,
 	    toDate: req.body.toDate
-	  }).then(function(poll) {
+	  }).then(poll => {
 	    db.Poll.find({
 	      where: { name: req.body.name, userId: req.session.userId }
-	    }).then(function(poll) {
+	    }).then(poll => {
 	      var pollId = poll.id;
 	      req.body.questionList.forEach(function(questionItem) {
 	        db.Question.create({
 	          pollId: pollId,
 	          name: questionItem.question
-	        }).then(function(question) {
+	        }).then(question => {
 	          db.Question.find({
 	            where: { pollId: pollId, name: question.name }
-	          }).then(function(item) {
+	          }).then(item => {
 	            var questionId = item.id;
 	            var optionList = [];
 	            questionItem.options.forEach(function(option) {
@@ -46,22 +66,16 @@ module.exports = function(app, db) {
 	              optionList.push(tempOption);
 	            });
 
-	            db.Option.bulkCreate(optionList).then(function() {
+	            db.Option.bulkCreate(optionList).then(() => {
 	              res.send(true);
-	            }, function(error) {
-	              console.error(error);
-	              res.send(false);
 	            })
 	          })
-	        }, function(error) {
-	          console.error(error);
-	          res.send(false);
 	        })
 	      })
 	    })
-	  }, function(error) {
-	    console.error(error);
-	    res.send(false);
-	  })
+	  }).catch(error => {
+			console.error(error);
+			res.send(false);
+		})
 	})
 };
