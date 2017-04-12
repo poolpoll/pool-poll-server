@@ -39,43 +39,45 @@ module.exports = function(app, db) {
 	}),
 
 	app.post('/polls/regist', (req, res) => {
-	  db.Poll.create({
-	    name: req.body.name,
-	    categoryId: req.body.categoryId,
-	    description: req.body.description,
-	    userId: req.session.userId,
-	    fromDate: req.body.fromDate,
-	    toDate: req.body.toDate
-	  }).then(poll => {
-	    db.Poll.find({
-	      where: { name: req.body.name, userId: req.session.userId }
-	    }).then(poll => {
-	      var pollId = poll.id;
-	      req.body.questionList.forEach(function(questionItem) {
-	        db.Question.create({
-	          pollId: pollId,
-	          name: questionItem.question
-	        }).then(question => {
-	          db.Question.find({
-	            where: { pollId: pollId, name: question.name }
-	          }).then(item => {
-	            var questionId = item.id;
-	            var optionList = [];
-	            questionItem.options.forEach(function(option) {
-	              var tempOption = { questionId: questionId, name: option };
-	              optionList.push(tempOption);
-	            });
+		db.Poll.create({
+			name: req.body.name,
+			userId: req.session.userId,
+			categoryId: req.body.categoryId,
+			description: req.body.description,
+			fromDate: req.body.fromDate,
+			toDate: req.body.toDate
+		}).then(poll => {
+			var pollId = poll.id;
 
-	            db.Option.bulkCreate(optionList).then(() => {
-	              res.send(true);
-	            })
-	          })
-	        })
-	      })
-	    })
-	  }).catch(error => {
+			req.body.questionList.forEach(function(question) {
+				db.Question.create({
+					pollId: pollId,
+					name: question.name,
+					multyCheck: question.multyCheck,
+					multyCheckLimit: question.multyCheckLimit
+				}).then(question => {
+					var questionId = question.id;
+					var questionName = question.name;
+					var optionList = [];
+
+					req.body.questionList.forEach(function(question) {
+						if(question.name == questionName) {
+							question.options.forEach(function(option) {
+								optionList.push({ name: option, questionId: questionId })
+							})
+						}
+					});
+
+					db.Option.bulkCreate(optionList).then((optionList) => {
+						return optionList;
+					})
+				})
+			});
+		}).then(() => {
+			res.send(true);
+		}).catch(error => {
 			console.error(error);
-			res.send(false);
+			res.status(500).send(false);
 		})
 	})
 };

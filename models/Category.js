@@ -16,6 +16,7 @@ module.exports = function(sequelize, Sequelize) {
 			type: Sequelize.INTEGER
 		}
 	}, {
+		timestamps: false,
 		indexes: [{
 			unique: true,
 			fields: [ 'name' ]

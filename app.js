@@ -43,6 +43,7 @@ var requestFilter = require('./filters/requestFilter')(app, db);
 var menuController = require('./controllers/menuController')(app, db);
 var pollController = require('./controllers/pollController')(app, db);
 var questionController = require('./controllers/questionController')(app, db);
+var optionController = require('./controllers/optionController')(app, db);
 var authController = require('./controllers/authController')(app, db);
 var userController = require('./controllers/userController')(app, db);
 var userCategoryController = require('./controllers/userCategoryController')(app, db);
