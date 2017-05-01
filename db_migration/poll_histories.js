@@ -11,25 +11,20 @@ const sequelize = new Sequelize(CONF.DB.DATABASE, CONF.DB.USER, CONF.DB.PASSWORD
 	}
 });
 
-const OPTION = sequelize.define('options', {
-	questionId: {
-		type: Sequelize.INTEGER,
-		allowNull: false
-	},
-	name: {
-		type: Sequelize.STRING(255),
-		allowNull: false
-	},
-  count: {
+const POLL_HISTORY = sequelize.define('pollHistory', {
+  pollId: {
     type: Sequelize.INTEGER,
-		defaultValue: 0
+    allowNull: false
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   }
 }, {
-	timestamps: false,
-	indexes: [{
-		unique: true,
-		fields: [ 'questionId', 'name' ]
-	}]
+  indexes: [{
+    unique: true,
+    fields: [ 'pollId', 'userId' ]
+  }]
 });
 
 sequelize.sync({

@@ -34,6 +34,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+
 /**
  * Custom Modules
  * Routes
@@ -42,6 +43,7 @@ var db = require('./config/db.js');
 var requestFilter = require('./filters/requestFilter')(app, db);
 var menuController = require('./controllers/menuController')(app, db);
 var pollController = require('./controllers/pollController')(app, db);
+var pollHistoryController = require('./controllers/pollHistoryController')(app, db);
 var questionController = require('./controllers/questionController')(app, db);
 var optionController = require('./controllers/optionController')(app, db);
 var authController = require('./controllers/authController')(app, db);

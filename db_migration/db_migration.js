@@ -69,10 +69,12 @@ const CATEGORY = sequelize.define('categories', {
 		type: Sequelize.STRING(255)
 	},
 	userCount: {
-		type: Sequelize.INTEGER
+		type: Sequelize.INTEGER,
+		defaultValue: 0
 	},
 	pollCount: {
-		type: Sequelize.INTEGER
+		type: Sequelize.INTEGER,
+		defaultValue: 0
 	}
 }, {
 	timestamps: false,
@@ -169,7 +171,8 @@ const OPTION = sequelize.define('options', {
 		allowNull: false
 	},
   count: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+		defaultValue: 0
   }
 }, {
 	timestamps: false,
@@ -181,6 +184,22 @@ const OPTION = sequelize.define('options', {
 
 OPTION.belongsTo(QUESTION);
 QUESTION.hasMany(OPTION);
+
+const POLL_HISTORY = sequelize.define('pollHistory', {
+  pollId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  }
+}, {
+  indexes: [{
+    unique: true,
+    fields: [ 'pollId', 'userId' ]
+  }]
+});
 
 sequelize.sync({
 	force: true
