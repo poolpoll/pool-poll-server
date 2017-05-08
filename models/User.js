@@ -21,6 +21,9 @@ module.exports = function(sequelize, Sequelize) {
 		gender: {
 			type: Sequelize.STRING(20)
 		},
+		attachment_id: {
+			type: Sequelize.INTEGER(255)
+		},
 		encryptedPassword: {
 			type: Sequelize.STRING(255),
 			allowNull: false

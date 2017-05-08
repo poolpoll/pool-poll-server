@@ -30,6 +30,9 @@ const USER = sequelize.define('users', {
 	gender: {
 		type: Sequelize.STRING(20)
 	},
+	attachment_id: {
+		type: Sequelize.STRING(255)
+	},	
 	encryptedPassword: {
 		type: Sequelize.STRING(255),
 		allowNull: false
@@ -95,7 +98,7 @@ const MENU = sequelize.define('menus', {
 		type: Sequelize.STRING(255)
 	},
 	route: {
-		type: Sequelize.STRING(10)
+		type: Sequelize.STRING(32)
 	}
 }, {
 	timestamps: false,
@@ -200,6 +203,35 @@ const POLL_HISTORY = sequelize.define('pollHistory', {
     fields: [ 'pollId', 'userId' ]
   }]
 });
+
+const ATTACHMENT = sequelize.define('attachments', {
+  id: {
+  	type: Sequelize.STRING(255),
+  	allowNull: false,
+  	primaryKey: true
+  },
+  originName: {
+  	type: Sequelize.STRING(255),
+  	allowNull: false
+  },
+  mimeType: {
+  	type: Sequelize.STRING(32)
+  },
+  path: {
+  	type: Sequelize.STRING(255),
+  	allowNull: false
+  },
+  size: {
+  	type: Sequelize.INTEGER
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  }
+});
+
+USER.belongsTo(ATTACHMENT);
+ATTACHMENT.hasOne(USER);
 
 sequelize.sync({
 	force: true

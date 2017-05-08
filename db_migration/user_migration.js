@@ -20,6 +20,7 @@ const USER = sequelize.define('users', {
 		type: Sequelize.STRING(60),
 		allowNull: false
 	},
+
 	email: {
 		type: Sequelize.STRING(30),
 		allowNull: false
@@ -30,6 +31,9 @@ const USER = sequelize.define('users', {
 	gender: {
 		type: Sequelize.STRING(20)
 	},
+	attachment_id: {
+		type: Sequelize.STRING(255)
+	},	
 	encryptedPassword: {
 		type: Sequelize.STRING(255),
 		allowNull: false

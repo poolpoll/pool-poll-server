@@ -25,5 +25,6 @@ db.Option = require('../models/Option.js')(sequelize, Sequelize);
 db.User = require('../models/User.js')(sequelize, Sequelize);
 db.UserCategory = require('../models/UserCategory.js')(sequelize, Sequelize);
 db.Category = require('../models/Category.js')(sequelize, Sequelize);
+db.Attachment = require('../models/Attachment.js')(sequelize, Sequelize);
 
 module.exports = db;

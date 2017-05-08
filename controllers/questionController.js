@@ -7,7 +7,7 @@ module.exports = (app, db) => {
 
   app.get('/questions', (req, res) => {
     db.Question.findAll().then((items) => {
-      res.send(items);
+      res.status(200).send(items);
     })
   }),
 
@@ -16,10 +16,10 @@ module.exports = (app, db) => {
       where: req.params,
       include: [ db.Option ]
     }).then(questions => {
-      res.send(questions);
+      res.status(200).send(questions);
     }).catch(error => {
       console.error(error);
-      res.send(false);
+      res.status(500).send(false);
     })
   })
 };

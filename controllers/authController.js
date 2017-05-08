@@ -5,19 +5,22 @@
 const AuthUtil = require('../utils/AuthUtil.js');
 
 module.exports = (app, db) => {
+  db.Attachment.belongsTo(db.User);
+  db.User.hasOne(db.Attachment);
+
 	app.post('/auth/sign_in', (req, res) => {
 		var body = req.body;
 		var account = body.account;
 		var rawPwd = body.password;
 
-		db.User.find({
+		db.User.findOne({
 			where: {
 				account: account
-			}
+			},
+			include: [ db.Attachment ]
 		}).then(user => {
 			if(user) {
 				var encryptPassword = AuthUtil.encryptPassword(rawPwd, user.salt);
-
 				if(user && user.encryptedPassword === encryptPassword) {
 					req.session.userId = user.id;
 					var userInfo = {
@@ -25,7 +28,8 @@ module.exports = (app, db) => {
 						name: user.name,
 						email: user.email,
 						birthDate: user.birthDate,
-						gender: user.gender
+						gender: user.gender,
+						attachment: user.Attachment
 					};
 					res.send(userInfo);
 				} else {

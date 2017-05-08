@@ -6,6 +6,10 @@ const CONFIG = {
 		DATABASE: 'free_poll_dev',
 		USER: 'root',
 		PASSWORD: '1111'
+	},
+
+	ATTACHMENT: {
+		DEST: '/Users/jay-dev/uploads'
 	}
 }
 
