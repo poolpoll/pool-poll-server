@@ -29,7 +29,8 @@ module.exports = (app, db) => {
 						email: user.email,
 						birthDate: user.birthDate,
 						gender: user.gender,
-						attachment: user.Attachment
+						attachments: user.Attachments,
+						tags: user.tags
 					};
 					res.send(userInfo);
 				} else {

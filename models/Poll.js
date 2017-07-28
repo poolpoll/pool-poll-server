@@ -10,8 +10,9 @@ module.exports = function(sequelize, Sequelize) {
 		description: {
 			type: Sequelize.STRING(255),
 		},
-		categoryId: {
-			type: Sequelize.INTEGER,
+		tags: {
+			type: Sequelize.STRING(32),
+			allowNull: false
 		},
 		userId: {
 			type: Sequelize.INTEGER,

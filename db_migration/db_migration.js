@@ -32,6 +32,9 @@ const USER = sequelize.define('users', {
 	},
 	attachment_id: {
 		type: Sequelize.STRING(255)
+	},
+	tags: {
+		type: Sequelize.TEXT,
 	},	
 	encryptedPassword: {
 		type: Sequelize.STRING(255),
@@ -45,45 +48,6 @@ const USER = sequelize.define('users', {
 	indexes: [{
 		unique: true,
 		fields: [ 'name', 'account', 'email' ]
-	}]
-});
-
-const USER_CATEGORY = sequelize.define('user_categories', {
-	userId: {
-		type: Sequelize.INTEGER
-	},
-	categoryId: {
-		type: Sequelize.INTEGER
-	}
-}, {
-  timestamps: false
-}, {
-  indexes: [{
-    unique: true,
-    fields: [ 'userId', 'categoryId']
-  }]
-});
-
-const CATEGORY = sequelize.define('categories', {
-	name: {
-		type: Sequelize.STRING(64)
-	},
-	description: {
-		type: Sequelize.STRING(255)
-	},
-	userCount: {
-		type: Sequelize.INTEGER,
-		defaultValue: 0
-	},
-	pollCount: {
-		type: Sequelize.INTEGER,
-		defaultValue: 0
-	}
-}, {
-	timestamps: false,
-	indexes: [{
-		unique: true,
-		fields: [ 'name' ]
 	}]
 });
 
@@ -116,8 +80,9 @@ const POLL = sequelize.define('polls', {
 	description: {
 		type: Sequelize.STRING(255),
 	},
-	categoryId: {
-		type: Sequelize.INTEGER,
+	tags: {
+		type: Sequelize.STRING(32),
+		allowNull: false
 	},
 	userId: {
 		type: Sequelize.INTEGER,

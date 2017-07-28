@@ -2,6 +2,8 @@
  * Poll Controller
  */
 module.exports = function(app, db) {
+	db.Poll.belongsTo(db.User);
+
 	app.get('/polls', (req, res) => {
 		var joinPollIds = [];
 		var userId = req.session.userId;
@@ -12,14 +14,17 @@ module.exports = function(app, db) {
 			joinPollList.forEach(function(joinPoll) {
 				joinPollIds.push(joinPoll.pollId);
 			});
-			
+
 			var condition = {};
-			if(req.query.name) condition.name = { '$like': '%' + req.query.name + '%'	};
-			if(req.query.categoryId) condition.categoryId = req.query.categoryId;
-			condition.userId = { '$ne': req.session.userId };
+			if(req.query.name) condition.name = { $like: '%' + req.query.name + '%'	};
+			if(req.query.tags) condition.tags = req.query.tags;
+			condition.userId = { $ne: req.session.userId };
 			condition.activeFlag = true;
 
-			return db.Poll.findAll({ where: condition });
+			return db.Poll.findAll({
+				where: condition,
+				include: [{ model: db.User, attributes: ['name', 'level']}]
+			});
 		}).then(polls => {
 			joinPollIds.forEach(function(joinPollId) {
 				polls.forEach(function(poll) {
@@ -35,17 +40,65 @@ module.exports = function(app, db) {
 
 	app.get('/polls/my_polls', function(req, res) {
 		db.Poll.findAll({
-			where: {
-				userId: req.session.userId
-			}
+			where: { userId: req.session.userId },
+			include: [{ model: db.User, attributes: ['name', 'level']}]
 		}).then(function(polls) {
 			res.send(polls);
 		})
 	}),
 
+	app.get('/polls/tags', function(req, res) {
+		var tags = '';
+
+		db.User.findOne({
+			where: {
+				id: req.session.userId
+			}
+		}).then(userInfo => {
+			var orOper = [];
+			var wrapper = {};
+
+			tags = userInfo.tags.replace(/,\s/g, ',');
+			var tagList = tags.split(',');
+			tagList.forEach(function(tag) {
+				wrapper.tags = {
+					$like: '%' + tag + '%'
+				};
+
+				orOper.push(wrapper);
+			});
+
+			db.Poll.findAll({
+				where: { $or: orOper },
+				include: [{ model: db.User, attributes: ['name', 'level']}]
+			}).then(polls => {
+				res.send(polls);
+			})
+		}).catch(error => {
+			console.error(error);
+			res.status(500).send(error);
+		})
+	})
+
+	app.get('/polls/top/:limit', function(req, res) {
+		db.Poll.findAll({
+			order: [
+				['count', 'desc']
+			],
+			limit: parseInt(req.params.limit),
+			include: [{ model: db.User, attributes: ['name', 'level']}]
+		}).then( polls => {
+			res.status(200).send(polls);
+		}).catch(error => {
+			console.error(error);
+			res.status(500).send(error);
+		})
+	}),	
+
 	app.get('/polls/:id', function(req, res) {
 		db.Poll.find({
-			where: req.params
+			where: req.params,
+			include: [{ model: db.User, attributes: ['name', 'level']}]
 		}).then(function(poll) {
 			res.send(poll);
 		}, function(error) {
@@ -59,7 +112,7 @@ module.exports = function(app, db) {
 		db.Poll.create({
 			name: req.body.name,
 			userId: req.session.userId,
-			categoryId: req.body.categoryId,
+			tags: req.body.tags,
 			description: req.body.description,
 			fromDate: req.body.fromDate,
 			toDate: req.body.toDate
@@ -109,7 +162,8 @@ module.exports = function(app, db) {
 
 	app.delete('/polls/:id', (req, res) => {
 		db.Poll.findOne({
-			where: req.params
+			where: req.params,
+			include: [{ model: db.User, attributes: ['name', 'level']}]
 		}).then(poll => {
 			return db.Question.findAll({
 				where: { pollId: req.params.id }

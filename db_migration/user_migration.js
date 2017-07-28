@@ -20,7 +20,6 @@ const USER = sequelize.define('users', {
 		type: Sequelize.STRING(60),
 		allowNull: false
 	},
-
 	email: {
 		type: Sequelize.STRING(30),
 		allowNull: false
@@ -33,6 +32,19 @@ const USER = sequelize.define('users', {
 	},
 	attachment_id: {
 		type: Sequelize.STRING(255)
+	},	
+	tags: {
+		type: Sequelize.TEXT
+	},
+	level: {
+		type: Sequelize.INTEGER(255),
+		defaultValue: 1,
+		allowNull: false
+	},
+	coin: {
+		type: Sequelize.INTEGER(255),
+		defaultValue: 0,
+		allowNull: false
 	},	
 	encryptedPassword: {
 		type: Sequelize.STRING(255),
