@@ -27,9 +27,10 @@ module.exports = (app, db) => {
 						id: user.id,
 						name: user.name,
 						email: user.email,
+						level: user.level,
 						birthDate: user.birthDate,
 						gender: user.gender,
-						attachments: user.Attachments,
+						attachmentId: user.attachmentId,
 						tags: user.tags
 					};
 					res.send(userInfo);

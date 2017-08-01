@@ -21,7 +21,7 @@ module.exports = function(sequelize, Sequelize) {
 		gender: {
 			type: Sequelize.STRING(20)
 		},
-		attachment_id: {
+		attachmentId: {
 			type: Sequelize.INTEGER(255)
 		},
 		tags: {
