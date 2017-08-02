@@ -52,6 +52,14 @@ const QUESTION = sequelize.define('questions', {
 	name: {
 		type: Sequelize.STRING(64),
 		allowNull: false
+	},
+	multyCheck: {
+		type: Sequelize.BOOLEAN,
+		allowNull: false,
+		defaultValue: false
+	},
+	multyCheckLimit: {
+		type: Sequelize.INTEGER
 	}
 }, {
 	timestamps: false,

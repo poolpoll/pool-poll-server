@@ -23,7 +23,7 @@ module.exports = function(app, db) {
 
 			return db.Poll.findAll({
 				where: condition,
-				include: [{ model: db.User, attributes: ['name', 'level']}]
+				include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
 			});
 		}).then(polls => {
 			joinPollIds.forEach(function(joinPollId) {
@@ -41,44 +41,41 @@ module.exports = function(app, db) {
 	app.get('/polls/my_polls', function(req, res) {
 		db.Poll.findAll({
 			where: { userId: req.session.userId },
-			include: [{ model: db.User, attributes: ['name', 'level']}]
+			include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
 		}).then(function(polls) {
 			res.send(polls);
 		})
 	}),
 
 	app.get('/polls/tags', function(req, res) {
-		var tags = '';
+		db.User.findById(req.session.userId).then(userInfo => {
+			if(userInfo.tags) {
+				var orOper = [];
+				var wrapper = {};				
+				var tags = userInfo.tags.replace(/,\s/g, ',');
 
-		db.User.findOne({
-			where: {
-				id: req.session.userId
+				var tagList = tags.split(',');
+				tagList.forEach(function(tag) {
+					wrapper.tags = {
+						$like: '%' + tag + '%'
+					};
+
+					orOper.push(wrapper);
+				});
+
+				return db.Poll.findAll({
+					where: { $or: orOper },
+					include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
+				});
+			} else {
+				return null;
 			}
-		}).then(userInfo => {
-			var orOper = [];
-			var wrapper = {};
-
-			tags = userInfo.tags.replace(/,\s/g, ',');
-			var tagList = tags.split(',');
-			tagList.forEach(function(tag) {
-				wrapper.tags = {
-					$like: '%' + tag + '%'
-				};
-
-				orOper.push(wrapper);
-			});
-
-			db.Poll.findAll({
-				where: { $or: orOper },
-				include: [{ model: db.User, attributes: ['name', 'level']}]
-			}).then(polls => {
-				res.send(polls);
-			})
+		}).then(polls => {
+			res.send(polls);
 		}).catch(error => {
-			console.error(error);
-			res.status(500).send(error);
+			throw error;
 		})
-	})
+	});
 
 	app.get('/polls/top/:limit', function(req, res) {
 		db.Poll.findAll({
@@ -86,70 +83,68 @@ module.exports = function(app, db) {
 				['count', 'desc']
 			],
 			limit: parseInt(req.params.limit),
-			include: [{ model: db.User, attributes: ['name', 'level']}]
+			include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
 		}).then( polls => {
 			res.status(200).send(polls);
 		}).catch(error => {
-			console.error(error);
-			res.status(500).send(error);
+			throw error;
 		})
 	}),	
 
 	app.get('/polls/:id', function(req, res) {
 		db.Poll.find({
 			where: req.params,
-			include: [{ model: db.User, attributes: ['name', 'level']}]
+			include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
 		}).then(function(poll) {
 			res.send(poll);
 		}, function(error) {
-			console.error(error);
-			res.send(error);
+			throw error;
 		})
 	}),
 
 	app.post('/polls/regist', (req, res) => {
-		// TODO: 비동기식 쿼리 실행으로 인한 쿼리 오류 발생시 트렌젝션 롤벡 가능하도록 수정
+		var questionList = req.body.questionList;
 		db.Poll.create({
 			name: req.body.name,
 			userId: req.session.userId,
 			tags: req.body.tags,
 			description: req.body.description,
 			fromDate: req.body.fromDate,
-			toDate: req.body.toDate
+			toDate: req.body.toDate			
 		}).then(poll => {
 			var pollId = poll.id;
 
-			req.body.questionList.forEach(function(question) {
-				db.Question.create({
+			questionList.forEach(function(question) {
+				var questionId = question.id;
+				var questionName = question.name;
+				var optionList = [];
+
+				return db.Question.create({
 					pollId: pollId,
 					name: question.name,
 					multyCheck: question.multyCheck,
 					multyCheckLimit: question.multyCheckLimit
 				}).then(question => {
-					var questionId = question.id;
-					var questionName = question.name;
-					var optionList = [];
-
-					req.body.questionList.forEach(function(question) {
+					console.log("#######")
+					console.log(question);
+					console.log("#######")
+					questionList.forEach(function(question) {
 						if(question.name == questionName) {
 							question.options.forEach(function(option) {
-								optionList.push({ name: option, questionId: questionId })
-							})
+								optionList.push({ name: option, questionId: question.id });
+							});
 						}
 					});
 
-					db.Option.bulkCreate(optionList).then((optionList) => {
-						return optionList;
-					})
-				})
+					db.Option.bulkCreate(optionList);
+				})	
 			});
 		}).then(() => {
 			res.send(true);
 		}).catch(error => {
-			console.error(error);
-			res.status(500).send(false);
+			throw error;
 		})
-	}),
+	});
 
 	app.post('/polls/active/:id', (req, res) => {
 		db.Poll.update(req.body, { where: req.params}).then(poll => {
@@ -163,7 +158,7 @@ module.exports = function(app, db) {
 	app.delete('/polls/:id', (req, res) => {
 		db.Poll.findOne({
 			where: req.params,
-			include: [{ model: db.User, attributes: ['name', 'level']}]
+			include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
 		}).then(poll => {
 			return db.Question.findAll({
 				where: { pollId: req.params.id }

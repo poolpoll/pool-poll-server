@@ -82,7 +82,7 @@ module.exports = function(app, db) {
 				id: user.id,
 				name: user.name,
 				email: user.email,
-				level: user.lavel,
+				level: user.level,
 				birthDate: user.birthDate,
 				gender: user.gender,
 				attachmentId: user.attachmentId,
