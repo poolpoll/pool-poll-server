@@ -5,19 +5,17 @@
 const AuthUtil = require('../utils/AuthUtil.js');
 
 module.exports = (app, db) => {
-  db.Attachment.belongsTo(db.User);
-  db.User.hasOne(db.Attachment);
+	db.Attachment.hasMany(db.User);
 
 	app.post('/auth/sign_in', (req, res) => {
-		var body = req.body;
-		var account = body.account;
-		var rawPwd = body.password;
+		var email = req.body.email;
+		var rawPwd = req.body.password;
 
 		db.User.findOne({
 			where: {
-				account: account
+				email: email
 			},
-			include: [ db.Attachment ]
+			include: [{ model: db.Attachment }]
 		}).then(user => {
 			if(user) {
 				var encryptPassword = AuthUtil.encryptPassword(rawPwd, user.salt);

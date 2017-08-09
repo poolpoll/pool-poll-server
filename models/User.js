@@ -3,10 +3,6 @@
  */
 module.exports = function(sequelize, Sequelize) {
 	const User = sequelize.define('users', {
-		account: {
-			type: Sequelize.STRING(20),
-			allowNull: false
-		},
 		name: {
 			type: Sequelize.STRING(60),
 			allowNull: false
@@ -45,6 +41,11 @@ module.exports = function(sequelize, Sequelize) {
 			type: Sequelize.STRING(255),
 			allowNull: false
 		}
+	}, {
+		indexes: [{
+			unique: true,
+			fields: [ 'name', 'email' ]
+		}]
 	});
 
 	return User;

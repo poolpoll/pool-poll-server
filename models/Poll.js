@@ -8,7 +8,11 @@ module.exports = function(sequelize, Sequelize) {
 			allowNull: false
 		},
 		description: {
-			type: Sequelize.STRING(255),
+			type: Sequelize.TEXT,
+		},
+		multyCheckLimit: {
+			type: Sequelize.INTEGER,
+			defaultValue: 1
 		},
 		tags: {
 			type: Sequelize.STRING(32),
@@ -18,10 +22,10 @@ module.exports = function(sequelize, Sequelize) {
 			type: Sequelize.INTEGER,
 			allowNull: false
 		},
-		fromDate: {
+		expireDate: {
 			type: Sequelize.STRING(12)
 		},
-		toDate: {
+		expireTime: {
 			type: Sequelize.STRING(12)
 		},
 		count: {

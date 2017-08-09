@@ -1,8 +1,52 @@
 /**
  * Poll Controller
  */
+var multer = require('multer');
+var thumbnailUpload = multer({ dest: './uploads/thumbnails' });
+
 module.exports = function(app, db) {
 	db.Poll.belongsTo(db.User);
+	db.Option.belongsTo(db.Poll);
+
+	app.post('/polls', thumbnailUpload.single('thumbnail'), (req, res) => {
+    var userId = req.session.userId;
+    var name = req.body.name;
+		var description = req.body.description;
+		var expireDate = req.body.expireDate;
+		var expireTime = req.body.expireTime;
+		var tags = req.body.tags;
+		var multyCheckLimit = req.body.multyCheckLimit;
+
+    var fileInfo = res.req.file;
+    var data = {
+      id: fileInfo.filename,
+      storage: fileInfo.fieldname,
+      originName: fileInfo.originalname,
+      mimeType: fileInfo.mimetype,
+      path: fileInfo.path,
+      size: fileInfo.size
+    };
+
+    db.Attachment.create(data).then(attachment => {
+    	var attachmentId = attachment.id;
+    	
+    	return db.Poll.create({
+				name: name,
+				description: description,
+				expireDate: expireDate,
+				expireTime: expireTime,
+				tags: tags,
+				multyCheckLimit: parseInt(multyCheckLimit),
+				userId: userId,
+				attachmentId: attachmentId
+    	})
+    }).then(poll => {
+    	res.send(poll);
+    }).catch(error => {
+    	console.error(error);
+    	throw error;
+    });
+	});
 
 	app.get('/polls', (req, res) => {
 		var joinPollIds = [];
@@ -41,9 +85,15 @@ module.exports = function(app, db) {
 	app.get('/polls/my_polls', function(req, res) {
 		db.Poll.findAll({
 			where: { userId: req.session.userId },
-			include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
+			include: [{
+				model: db.User,
+				attributes: ['name', 'level', 'attachmentId']
+			}]
 		}).then(function(polls) {
 			res.send(polls);
+		}).catch(error => {
+			console.error(error);
+			throw error;
 		})
 	}),
 
@@ -101,50 +151,6 @@ module.exports = function(app, db) {
 			throw error;
 		})
 	}),
-
-	app.post('/polls/regist', (req, res) => {
-		var questionList = req.body.questionList;
-		db.Poll.create({
-			name: req.body.name,
-			userId: req.session.userId,
-			tags: req.body.tags,
-			description: req.body.description,
-			fromDate: req.body.fromDate,
-			toDate: req.body.toDate			
-		}).then(poll => {
-			var pollId = poll.id;
-
-			questionList.forEach(function(question) {
-				var questionId = question.id;
-				var questionName = question.name;
-				var optionList = [];
-
-				return db.Question.create({
-					pollId: pollId,
-					name: question.name,
-					multyCheck: question.multyCheck,
-					multyCheckLimit: question.multyCheckLimit
-				}).then(question => {
-					console.log("#######")
-					console.log(question);
-					console.log("#######")
-					questionList.forEach(function(question) {
-						if(question.name == questionName) {
-							question.options.forEach(function(option) {
-								optionList.push({ name: option, questionId: question.id });
-							});
-						}
-					});
-
-					db.Option.bulkCreate(optionList);
-				})	
-			});
-		}).then(() => {
-			res.send(true);
-		}).catch(error => {
-			throw error;
-		})
-	});
 
 	app.post('/polls/active/:id', (req, res) => {
 		db.Poll.update(req.body, { where: req.params}).then(poll => {

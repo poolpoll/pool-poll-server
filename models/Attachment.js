@@ -24,10 +24,6 @@ module.exports = function(sequelize, Sequelize) {
 	  },
 	  size: {
 	  	type: Sequelize.INTEGER
-	  },
-	  userId: {
-	    type: Sequelize.INTEGER,
-	    allowNull: false
 	  }
 	});
 

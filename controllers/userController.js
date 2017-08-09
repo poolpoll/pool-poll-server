@@ -4,11 +4,10 @@
 const CONF = require('../config/config');
 var multer = require('multer');
 var fs = require('fs');
-var profileUpload = multer({ dest: './uploads/' });
+var profileUpload = multer({ dest: './uploads/profiles' });
 
 module.exports = function(app, db) {
-  db.Attachment.belongsTo(db.User);
-  db.User.hasOne(db.Attachment);
+	db.User.belongsTo(db.Attachment);
 
 	app.get('/users', function(req, res) {
 		db.User.findAll().then(function(users) {
@@ -37,7 +36,6 @@ module.exports = function(app, db) {
 			},
 			include: [ db.Attachment ]
 		}).then(user => {
-			user = user;
 			if(user.attachmentId) {
 				var attachment = user.attachment;
 
@@ -57,8 +55,7 @@ module.exports = function(app, db) {
 				originName: fileInfo.originalname,
 				mimeType: fileInfo.mimetype,
 				path: fileInfo.path,
-				size: fileInfo.size,
-				userId: userId
+				size: fileInfo.size
 			};
 
 			return db.Attachment.create(data);
