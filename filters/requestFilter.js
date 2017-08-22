@@ -2,9 +2,10 @@
  * request filter
  */
 
-module.exports = function(app, db) {
+module.exports = function(app) {
+	
 	app.all('*', function(req, res, next) {
-		if(req.session.userId || req.url == '/auth/sign_in' || req.url == '/auth/sign_up' || req.method == 'OPTIONS') {
+		if(req.session.userId || req.url.substring(0, 6) == '/auth/' || req.method == 'OPTIONS') {
 			next();
 		} else {
 			res.status(401).send('Unauthorized.');

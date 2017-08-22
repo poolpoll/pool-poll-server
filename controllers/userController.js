@@ -1,20 +1,13 @@
 /**
  * User Controller
  */
-const CONF = require('../config/config');
 var multer = require('multer');
 var fs = require('fs');
 var profileUpload = multer({ dest: './uploads/profiles' });
 
-module.exports = function(app, db) {
+module.exports = function(app, db) {	
 	db.User.belongsTo(db.Attachment);
-
-	app.get('/users', function(req, res) {
-		db.User.findAll().then(function(users) {
-			res.send(users);
-		})
-	});
-
+	
 	app.get('/users/:id', function(req, res) {
 		db.User.find({
 			where: req.params,
@@ -91,27 +84,6 @@ module.exports = function(app, db) {
 			throw error;
 		})
 	}),
-
-	app.get('/users/profile/:id', function(req, res) {
-		var filePath;
-		var mimeType;
-
-		db.Attachment.findOne({
-			where: {
-				id: req.params.id
-			}
-		}).then(attachment => {
-			filePath = attachment.path;
-			mimeType = attachment.mimeType;
-
-			fs.readFile(filePath, (error, profile) => {
-				if(error) throw error;
-
-				res.writeHead(200, { 'Content-Type': mimeType });
-				res.end(profile, 'binary');
-			})
-		})
-	})
 
 	app.post('/users/:id', function(req, res) {
 		db.User.update(req.body, {

@@ -7,30 +7,44 @@ var thumbnailUpload = multer({ dest: './uploads/thumbnails' });
 module.exports = (app, db) => {
   app.post('/options', thumbnailUpload.single('thumbnail'), function(req, res) {
     var userId = req.session.userId;
-    var fileInfo = res.req.file;
-    var data = {
-      id: fileInfo.filename,
-      storage: fileInfo.fieldname,
-      originName: fileInfo.originalname,
-      mimeType: fileInfo.mimetype,
-      path: fileInfo.path,
-      size: fileInfo.size
+    var attachmentId;
+
+    if(res.req.file) {
+      var fileInfo = res.req.file;
+      var data = {
+        id: fileInfo.filename,
+        storage: fileInfo.fieldname,
+        originName: fileInfo.originalname,
+        mimeType: fileInfo.mimetype,
+        path: fileInfo.path,
+        size: fileInfo.size
+      };
+
+      db.Attachment.create(data).then(attachment => {
+        attachmentId = attachment.id;
+
+        return db.Option.create({
+          name: req.body.name,
+          pollId: req.body.pollId,
+          userId: userId,
+          attachmentId: attachmentId
+        });
+      }).then(option => {
+        res.send(option);
+      }).catch(error => {
+        throw error;
+      })
     };
 
-    db.Attachment.create(data).then(attachment => {
-      var attachmentId = attachment.id;
-
-      return db.Option.create({
-        name: req.body.name,
-        pollId: req.body.pollId,
-        userId: userId,
-        attachmentId: attachmentId
-      })
+    db.Option.create({
+      name: req.body.name,
+      pollId: req.body.pollId,
+      userId: userId,
+      attachmentId: attachmentId
     }).then(option => {
       res.send(option);
     }).catch(error => {
       throw error;
-      console.error(error);
     });
   }),
 

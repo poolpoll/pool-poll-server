@@ -35,6 +35,9 @@ module.exports = function(sequelize, Sequelize) {
 		activeFlag: {
 			type: Sequelize.BOOLEAN,
 			defaultValue: false
+		},
+		attachmentId: {
+			type: Sequelize.TEXT
 		}
 	});
 

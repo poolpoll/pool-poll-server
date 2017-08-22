@@ -35,20 +35,21 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
 /**
  * Custom Modules
  * Routes
  */
-var db = require('./config/db.js');
-var requestFilter = require('./filters/requestFilter')(app, db);
-var menuController = require('./controllers/menuController')(app, db);
-var pollController = require('./controllers/pollController')(app, db);
-var pollHistoryController = require('./controllers/pollHistoryController')(app, db);
-var optionController = require('./controllers/optionController')(app, db);
-var authController = require('./controllers/authController')(app, db);
-var userController = require('./controllers/userController')(app, db);
-var attachmentController = require('./controllers/attachmentController')(app, db);
+const db = require('./config/db.js');
+const CrudUtil = require('./utils/CrudUtil');
+
+const requestFilter = require('./filters/requestFilter')(app);
+const menuController = require('./controllers/menuController')(app, db);
+const userController = require('./controllers/userController')(app, db);
+const authController = require('./controllers/authController')(app, db);
+const pollController = require('./controllers/pollController')(app, db);
+const pollHistoryController = require('./controllers/pollHistoryController')(app, db);
+const optionController = require('./controllers/optionController')(app, db);
+const attachmentController = require('./controllers/attachmentController')(app, db);
 
 /**
  * Custom Module Attache Section

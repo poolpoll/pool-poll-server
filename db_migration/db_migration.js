@@ -78,7 +78,11 @@ const POLL = sequelize.define('polls', {
 		allowNull: false
 	},
 	description: {
-		type: Sequelize.STRING(255),
+		type: Sequelize.TEXT,
+	},
+	multyCheckLimit: {
+		type: Sequelize.INTEGER,
+		defaultValue: 1
 	},
 	tags: {
 		type: Sequelize.STRING(32),
@@ -88,10 +92,10 @@ const POLL = sequelize.define('polls', {
 		type: Sequelize.INTEGER,
 		allowNull: false
 	},
-	fromDate: {
+	expireDate: {
 		type: Sequelize.STRING(12)
 	},
-	toDate: {
+	expireTime: {
 		type: Sequelize.STRING(12)
 	},
 	count: {
@@ -130,28 +134,21 @@ const QUESTION = sequelize.define('questions', {
 	}]
 });
 
-QUESTION.belongsTo(POLL);
-POLL.hasMany(QUESTION);
-
 const OPTION = sequelize.define('options', {
 	name: {
 		type: Sequelize.STRING(255),
 		allowNull: false
 	},
   count: {
-    type: Sequelize.INTEGER,
-		defaultValue: 0
+    type: Sequelize.INTEGER
   }
 }, {
 	timestamps: false,
 	indexes: [{
 		unique: true,
-		fields: [ 'questionId', 'name' ]
+		fields: [ 'pollId', 'name' ]
 	}]
 });
-
-OPTION.belongsTo(QUESTION);
-QUESTION.hasMany(OPTION);
 
 const POLL_HISTORY = sequelize.define('pollHistory', {
   pollId: {
@@ -171,32 +168,33 @@ const POLL_HISTORY = sequelize.define('pollHistory', {
 
 const ATTACHMENT = sequelize.define('attachments', {
   id: {
-  	type: Sequelize.STRING(255),
-  	allowNull: false,
-  	primaryKey: true
+    type: Sequelize.STRING(255),
+    allowNull: false,
+    primaryKey: true
+  },
+  storage: {
+    type: Sequelize.STRING(255)
   },
   originName: {
-  	type: Sequelize.STRING(255),
-  	allowNull: false
+    type: Sequelize.STRING(255),
+    allowNull: false
   },
   mimeType: {
-  	type: Sequelize.STRING(32)
+    type: Sequelize.STRING(32)
   },
   path: {
-  	type: Sequelize.STRING(255),
-  	allowNull: false
+    type: Sequelize.STRING(255),
+    allowNull: false
   },
   size: {
-  	type: Sequelize.INTEGER
-  },
-  userId: {
-    type: Sequelize.INTEGER,
-    allowNull: false
+    type: Sequelize.INTEGER
   }
 });
 
-USER.belongsTo(ATTACHMENT);
-ATTACHMENT.hasOne(USER);
+POLL.hasMany(OPTION);
+ATTACHMENT.hasMany(POLL);
+ATTACHMENT.hasMany(OPTION);
+ATTACHMENT.hasMany(USER);
 
 sequelize.sync({
 	force: true

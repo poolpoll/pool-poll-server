@@ -4,7 +4,7 @@
 module.exports = function(sequelize, Sequelize) {
 	const User = sequelize.define('users', {
 		name: {
-			type: Sequelize.STRING(60),
+			type: Sequelize.STRING(24),
 			allowNull: false
 		},
 		email: {
@@ -40,7 +40,15 @@ module.exports = function(sequelize, Sequelize) {
 		salt: {
 			type: Sequelize.STRING(255),
 			allowNull: false
-		}
+		},
+		activeCode: {
+			type: Sequelize.STRING(8)
+		},		
+		active: {
+			type: Sequelize.BOOLEAN,
+			allowNull: true,
+			defaultValue: false
+		}		
 	}, {
 		indexes: [{
 			unique: true,

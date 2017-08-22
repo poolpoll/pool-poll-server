@@ -17,11 +17,11 @@ const db = {
 };
 
 // Model List
-db.Menu = require('../models/Menu.js')(sequelize, Sequelize);
-db.Poll = require('../models/Poll.js')(sequelize, Sequelize);
-db.PollHistory = require('../models/PollHistory.js')(sequelize, Sequelize);
-db.Option = require('../models/Option.js')(sequelize, Sequelize);
-db.User = require('../models/User.js')(sequelize, Sequelize);
-db.Attachment = require('../models/Attachment.js')(sequelize, Sequelize);
+db.Menu = require('../models/Menu')(sequelize, Sequelize);
+db.Poll = require('../models/Poll')(sequelize, Sequelize);
+db.PollHistory = require('../models/PollHistory')(sequelize, Sequelize);
+db.Option = require('../models/Option')(sequelize, Sequelize);
+db.User = require('../models/User')(sequelize, Sequelize);
+db.Attachment = require('../models/Attachment')(sequelize, Sequelize);
 
 module.exports = db;
