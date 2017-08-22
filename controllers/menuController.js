@@ -3,11 +3,11 @@
  */
 module.exports = function(app, db) {
 	app.get('/menus', function(req, res) {
-		db.Menu.findAll().then(function(menus) {
-			menus.sort(function(prev, next) {
-				return prev.rank < next.rank ? -1 : prev.rank > next.rank ? 1 : 0;
-			});
-
+		db.Menu.findAll({
+			order: [
+				['rank']
+			]			
+		}).then(function(menus) {
 			res.send(menus);
 		})
 	})

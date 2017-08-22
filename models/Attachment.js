@@ -24,7 +24,10 @@ module.exports = function(sequelize, Sequelize) {
 	  },
 	  size: {
 	  	type: Sequelize.INTEGER
-	  }
+	  },
+	  tags: {
+	  	type: Sequelize.STRING(64)
+	  }	  
 	});
 
 	return Attachment;

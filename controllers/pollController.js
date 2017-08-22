@@ -3,97 +3,49 @@
  */
 var multer = require('multer');
 var mainThumbnailUpload = multer({ dest: './uploads/main-thumbnails' });
-var thumbnailUpload = multer({ dest: './uploads/thumbnails' });
 
 module.exports = function(app, db) {
 	db.Poll.belongsTo(db.User);
 	db.Option.belongsTo(db.Poll);
 
-	app.post('/polls', (req, res) => {
-		if(req.file) {
-			console.log(req.file);
-			var file = {
-				id: req.file.filename,
-				storage: filename.fieldname,
-				originName: file
-			}
-		}
-	})
-
-	app.post('/polls', (req, res) => {
-		if(req.files) {
-			console.log('#####');
-			console.log(req.files);
-			var fileInfo = {
-				id: req.files[0]
-			}
-			mainThumbnailUpload.single('mainThumbnail', (req, res, error) => {
-				if(error) {
-					throw error;
-				}
-			})
+	app.post('/polls', mainThumbnailUpload.single('mainthumbnail'), function(req, res) {
+		var fileInfo = res.req.file;
+		var poll = {
+  		name: req.body.name,
+			description: req.body.description,
+			expireDate: req.body.expireDate,
+			expireTime: req.body.expireTime,
+			tags: req.body.tags,
+			multyCheckLimit: parseInt(req.body.multyCheckLimit),
+			userId: req.session.userId,
 		};
-	})
 
-	// app.post('/polls', thumbnailUpload.single('thumbnail'), (req, res) => {
-	// 	console.log(req.body);
- //    var userId = req.session.userId;
- //    var name = req.body.name;
-	// 	var description = req.body.description;
-	// 	var expireDate = req.body.expireDate;
-	// 	var expireTime = req.body.expireTime;
-	// 	var tags = req.body.tags;
-	// 	var multyCheckLimit = req.body.multyCheckLimit;
-	// 	var attachmentId;
+		if(fileInfo) {
+			db.Attachment.create({
+	      id: fileInfo.filename,
+	      storage: fileInfo.fieldname,
+	      originName: fileInfo.originalname,
+	      mimeType: fileInfo.mimetype,
+	      path: fileInfo.path,
+	      size: fileInfo.size,
+	      tags: 'mainthumbnail'
+			}).then(attachment => {
+				poll.attachmentId = attachment.id;
 
-	// 	if(res.req.file) {
-	//     var fileInfo = res.req.file;
-	//     var data = {
-	//       id: fileInfo.filename,
-	//       storage: fileInfo.fieldname,
-	//       originName: fileInfo.originalname,
-	//       mimeType: fileInfo.mimetype,
-	//       path: fileInfo.path,
-	//       size: fileInfo.size
-	//     };
-
-	//     db.Attachment.create(data).then(attachment => {
-	//     	attachmentId = attachment.id;
-
-	//     	return db.Poll.create({
-	//     		name: name,
-	// 				description: description,
-	// 				expireDate: expireDate,
-	// 				expireTime: expireTime,
-	// 				tags: tags,
-	// 				multyCheckLimit: parseInt(multyCheckLimit),
-	// 				userId: userId,
-	// 				attachmentId: attachmentId	    		
-	//     	})
-	//     }).then(poll => {
-	//     	res.send(poll);
-	//     }).catch(error => {
-	//     	throw error;
-	//     })
-	// 	};
-
-	// 	db.Poll.create({
-	// 		name: name,
-	// 		description: description,
-	// 		expireDate: expireDate,
-	// 		expireTime: expireTime,
-	// 		tags: tags,
-	// 		multyCheckLimit: parseInt(multyCheckLimit),
-	// 		userId: userId,
-	// 		attachmentId: attachmentId
-	// 	}).then(poll => {
-	// 		res.send(poll);
-	// 	}).then(poll => {
- //    	res.send(poll);
- //    }).catch(error => {
- //    	throw error;
- //    });
-	// });
+				return db.Poll.create(poll);
+			}).then(poll => {
+				res.send(poll);
+			}).catch(error => {
+				throw error;
+			})
+		} else {
+			db.Poll.create(poll).then(poll => {
+				res.send(poll);
+			}).catch(error => {
+				throw error;
+			})
+		}
+	}),
 
 	app.get('/polls', (req, res) => {
 		var joinPollIds = [];
@@ -127,7 +79,7 @@ module.exports = function(app, db) {
 			console.error(error);
 			res.send(false);
 		})
-	})
+	}),
 
 	app.get('/polls/my_polls', function(req, res) {
 		db.Poll.findAll({
