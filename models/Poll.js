@@ -23,15 +23,25 @@ module.exports = function(sequelize, Sequelize) {
 			allowNull: false
 		},
 		expireDate: {
-			type: Sequelize.STRING(12)
+			type: Sequelize.STRING(12),
+			allowNull: false
 		},
 		expireTime: {
-			type: Sequelize.STRING(12)
+			type: Sequelize.STRING(12),
+			allowNull: false
 		},
 		count: {
 			type: Sequelize.INTEGER,
 			defaultValue: 0
 		},
+		likeCount: {
+			type: Sequelize.INTEGER,
+			defaultValue: 0
+		},
+		commentCount: {
+			type: Sequelize.INTEGER,
+			defaultValue: 0
+		},		
 		activeFlag: {
 			type: Sequelize.BOOLEAN,
 			defaultValue: false

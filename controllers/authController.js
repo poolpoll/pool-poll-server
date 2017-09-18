@@ -42,9 +42,9 @@ module.exports = (app, db) => {
 					res.send(userInfo);
 				} else if(user && !user.active) {
 					// 활성화 되지 않은 사용자
-					res.send({
-						msg: 'activation'
-					});
+					res.send(false);
+				} else {
+					res.send(false);
 				}
 			} else {
 				// 사용자가 등록되어 있지 않습니다. 메시지
@@ -52,7 +52,7 @@ module.exports = (app, db) => {
 			}
 		}).catch(error => {
 			console.error(error);
-			res.send(error);
+			res.send(false);
 		})
 	});
 
@@ -81,14 +81,19 @@ module.exports = (app, db) => {
 
 			db.Attachment.create(data).then(attachment => {
 				body.attachmentId = attachment.id;
+
+				db.User.create(body).then(user => {
+					res.send(true);
+				}).catch(error => {
+					throw error;
+					console.error(error);
+				})
 			})
 		};
 
 		db.User.create(body).then(user => {
 			res.send(true);
 		}).catch(error => {
-			throw error;
-    }).catch(error => {
     	throw error;
     	console.error(error);
     });

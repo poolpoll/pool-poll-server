@@ -1,26 +1,26 @@
 /**
- * PollHistory Model
+ * Comment Model
  */
 module.exports = function(sequelize, Sequelize) {
-	const PollHistory = sequelize.define('pollHistories', {
-		userId: {
-			type: Sequelize.INTEGER,
+	const Comment = sequelize.define('comments', {
+		comment: {
+			type: Sequelize.STRING(255),
 			allowNull: false
 		},
 		pollId: {
 			type: Sequelize.INTEGER,
 			allowNull: false
 		},
-		optionId: {
+		userId: {
 			type: Sequelize.INTEGER,
 			allowNull: false
 		}
 	}, {
 		indexes: [{
 			unique: true,
-			fields: [ 'userId', 'pollId', 'optionId' ]
+			fields: [ 'userId', 'comment' ]
 		}]
 	});
 
-	return PollHistory;
+	return Comment;
 };

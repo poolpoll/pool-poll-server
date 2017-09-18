@@ -27,17 +27,23 @@ const POLL = sequelize.define('polls', {
 		type: Sequelize.STRING(32),
 		allowNull: false
 	},
-	userId: {
-		type: Sequelize.INTEGER,
+	expireDate: {
+		type: Sequelize.STRING(12),
 		allowNull: false
 	},
-	expireDate: {
-		type: Sequelize.STRING(12)
-	},
 	expireTime: {
-		type: Sequelize.STRING(12)
+		type: Sequelize.STRING(12),
+		allowNull: false
 	},
 	count: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0
+	},
+	likeCount: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0
+	},
+	commentCount: {
 		type: Sequelize.INTEGER,
 		defaultValue: 0
 	},
@@ -68,11 +74,14 @@ const OPTION = sequelize.define('options', {
 	}]
 });
 
+      // primaryKey: true,
+      // type: DataTypes.UUID,
+      // defaultValue: DataTypes.UUIDV4,
+
 const ATTACHMENT = sequelize.define('attachments', {
   id: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-    primaryKey: true
+  	primaryKey: true,
+  	type: Sequelize.UUID
   },
   storage: {
     type: Sequelize.STRING(255)
@@ -147,6 +156,25 @@ const USER = sequelize.define('users', {
 	}]
 });
 
+const COMMENT = sequelize.define('comments', {
+	content: {
+		type: Sequelize.STRING(255),
+		allowNull: false
+	}
+}, {
+	indexes: [{
+		unique: true,
+		fields: [ 'userId', 'content' ]
+	}]
+});
+
+const ACTIVE_CODE = sequelize.define('activeCodes', {
+
+})
+
+USER.hasMany(COMMENT);
+POLL.hasMany(COMMENT);
+USER.hasMany(POLL);
 POLL.hasMany(OPTION);
 ATTACHMENT.hasMany(POLL);
 ATTACHMENT.hasMany(OPTION);
