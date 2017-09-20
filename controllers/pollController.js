@@ -2,7 +2,9 @@
  * Poll Controller
  */
 var multer = require('multer');
+var userController = require('./userController');
 var mainThumbnailUpload = multer({ dest: './uploads/main-thumbnails' });
+const COIN_RULE = require('../config/config').COIN_RULE;
 
 module.exports = function(app, db) {
 	db.Poll.belongsTo(db.User);
@@ -37,12 +39,28 @@ module.exports = function(app, db) {
 
 				return db.Poll.create(poll);
 			}).then(poll => {
+				db.User.findOne({
+					id: req.session.userId
+				}).then(user => {
+					var currentCoin = user.coin;
+					return currentCoin + COIN_RULE.REGIST_POLL;
+				}).then(coin => {
+					db.User.update({
+						coin: coin
+					}, {
+						where: {
+							id: req.session.userId
+						}
+					})
+				})
+
 				res.send(poll);
 			}).catch(error => {
 				throw error;
 			})
 		} else {
 			db.Poll.create(poll).then(poll => {
+
 				res.send(poll);
 			}).catch(error => {
 				throw error;
@@ -327,6 +345,23 @@ module.exports = function(app, db) {
 
 			return db.PollHistory.bulkCreate(pollHistories)
 		}).then(() => {
+			db.User.findOne({
+				where: {
+					id: req.session.userId
+				}
+			}).then(user => {
+				var currentCoin = user.coin;
+				return currentCoin + COIN_RULE.JOIN_POLL;
+			}).then(coin => {
+				db.User.update({
+					coin: coin
+				}, {
+					where: {
+						id: req.session.userId
+					}
+				});
+			});
+			
 			res.send(true);
 		}).catch(error => {
 			throw error;

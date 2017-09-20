@@ -5,7 +5,7 @@ var multer = require('multer');
 var fs = require('fs');
 var profileUpload = multer({ dest: './uploads/profiles' });
 
-module.exports = function(app, db) {	
+module.exports = function(app, db) {
 	db.User.belongsTo(db.Attachment);
 	
 	app.get('/users/:id', function(req, res) {

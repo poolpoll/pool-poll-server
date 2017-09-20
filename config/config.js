@@ -10,6 +10,14 @@ const CONFIG = {
 
 	ATTACHMENT: {
 		DEST: '/Users/jay-dev/uploads'
+	},
+
+	COIN_RULE: {
+		REGIST_POLL: 20,
+		DELETE_BEFORE_EXPIRED: -20,
+		DELETE_AFTER_EXPPIRED: -5,
+		REGIST_COMMENT: 3,
+		JOIN_POLL: 3
 	}
 }
 
