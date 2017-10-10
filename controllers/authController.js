@@ -89,14 +89,14 @@ module.exports = (app, db) => {
 					console.error(error);
 				})
 			})
-		};
-
-		db.User.create(body).then(user => {
-			res.send(true);
-		}).catch(error => {
-    	throw error;
-    	console.error(error);
-    });
+		} else {
+			db.User.create(body).then(user => {
+				res.send(true);
+			}).catch(error => {
+	    	throw error;
+	    	console.error(error);
+	    });
+		}
 	});
 	
 	/**

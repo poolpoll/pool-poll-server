@@ -194,7 +194,7 @@ module.exports = function(app, db) {
 		}).catch(error => {
 			throw error;
 		})
-	});
+	}),
 
 	/**
 	 * Poll Index with LIMIT API (Top 100)
