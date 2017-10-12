@@ -37,7 +37,8 @@ module.exports = function(app, db) {
 				commentId: req.params.commentId
 			},
 			include: [{
-				model: db.CommentDetail
+				model: db.User,
+				attributes: ['name', 'level', 'attachmentId']
 			}]
 		}).then(commentDetails => {
 			res.send(commentDetails);
@@ -51,10 +52,24 @@ module.exports = function(app, db) {
 	 * Create Comment API
 	 */
 	app.post('/comments/:pollId', (req, res) => {
-		db.Comment.create({
-			comment: req.body.comment,
-			pollId: req.params.pollId,
-			userId: req.session.userId
+		db.Poll.findOne({
+			where: {
+				id: req.params.pollId
+			}
+		}).then(poll => {
+			return db.Poll.update({
+				commentCount: poll.commentCount + 1
+			}, {
+				where: {
+					id: poll.id
+				}
+			})
+		}).then(() => {
+			return db.Comment.create({
+				comment: req.body.comment,
+				pollId: req.params.pollId,
+				userId: req.session.userId
+			})
 		}).then(comment => {
 			res.send(comment);
 		}).catch(error => {
@@ -64,15 +79,57 @@ module.exports = function(app, db) {
 	}),
 
 	/**
-	 * Create Comment Detail API
+	 * Update Comment API
 	 */
-	app.post('/comment_details/:commentId', (req, res) => {
-		db.CommentDetail.create({
-			comment: req.body.comment,
-			commentId: req.params.commentId,
-			userId: req.session.userId
+	app.put('/comments/:id', (req, res) => {
+		db.Comment.update({
+			comment: req.body.comment
+		}, {
+			where: {
+				id: req.params.id
+			}
 		}).then(comment => {
 			res.send(comment);
+		}).catch(error => {
+			throw error;
+			console.error(error);
+		})
+	}),
+
+	/**
+	 * Delete Comment API
+	 */
+	app.delete('/comments/:id', (req, res) => {
+		var parentPollId;
+
+		db.Comment.findOne({
+			where: {
+				id: req.params.id
+			}
+		}).then(comment => {
+			parentPollId = comment.pollId;
+
+			return db.Poll.findOne({
+				where: {
+					id: parentPollId
+				}
+			})
+		}).then(poll => {
+			return db.Poll.update({
+				commentCount: poll.commentCount - 1
+			}, {
+				where: {
+					id: parentPollId
+				}
+			})
+		}).then(() => {
+			return db.Comment.destroy({
+				where: {
+					id: req.params.id
+				}
+			})
+		}).then(() => {
+			res.send(true);
 		}).catch(error => {
 			throw error;
 			console.error(error);

@@ -50,6 +50,7 @@ const pollController = require('./controllers/pollController')(app, db);
 const pollHistoryController = require('./controllers/pollHistoryController')(app, db);
 const optionController = require('./controllers/optionController')(app, db);
 const commentController = require('./controllers/commentController')(app, db);
+const commentDetailController = require('./controllers/commentDetailController')(app, db);
 const attachmentController = require('./controllers/attachmentController')(app, db);
 
 /**

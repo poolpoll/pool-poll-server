@@ -113,25 +113,41 @@ module.exports = function(app, db) {
 		var name = req.query.name;
 		var page = req.query.page;
 		var offset = ((page - 1) * 10);
+		var attendedPollIds = [];
 
-		db.Poll.findAll({
-			where: {
-				name: {
-			  	$like: '%' + name + '%' 
-				}
-			},
-			limit: 10,
-			offset: offset,
-			include: [{
-				model: db.User,
-				attributes: ['name', 'level', 'attachmentId']				
-			}]
+		db.PollHistory.findAll({
+			where: {userId: req.session.userId}
+		}).then(pollHistories => {
+			pollHistories.forEach(function(pollHistory) {
+				attendedPollIds.push(pollHistory.pollId);				
+			});
+
+			return db.Poll.findAll({
+				where: {
+					$or: {
+						name: {
+							$like: '%' + name + '%'
+						},
+						tags: {
+							$like: '%' + name + '%'
+						}
+					}
+				},
+				limit: 10,
+				offset: offset,
+				include: [{model: db.User, attributes: ['name', 'level', 'attachmentId']}]
+			});
 		}).then(polls => {
-			res.send(polls);
+			attendedPollIds.forEach(function(attendedPollId) {
+				polls.forEach(function(poll) {
+					if(attendedPollId == poll.id) poll.dataValues.isAttended = true;
+				})
+			})
+
+			res.send(polls);			
 		}).catch(error => {
 			throw error;
-			console.error(error);
-		})
+		});
 	}),
 
 	/**
@@ -153,7 +169,6 @@ module.exports = function(app, db) {
 		}).then(function(polls) {
 			res.send(polls);
 		}).catch(error => {
-			console.error(error);
 			throw error;
 		})
 	}),
@@ -162,13 +177,22 @@ module.exports = function(app, db) {
 	 * Poll Index By Tags API
 	 */
 	app.get('/polls/tags', function(req, res) {
-		var page = parseInt(req.query);
+		var page = req.query.page;
 		var offset = ((page - 1) * 10);
+		var attendedPollIds = [];
 
-		db.User.findById(req.session.userId).then(userInfo => {
+		db.PollHistory.findAll({
+			where: {userId: req.session.userId}
+		}).then(pollHistories => {
+			pollHistories.forEach(function(pollHistory) {
+				attendedPollIds.push(pollHistory.pollId);				
+			});
+
+			return db.User.findById(req.session.userId);			
+		}).then(userInfo => {
 			if(userInfo.tags) {
 				var orOper = [];
-				var wrapper = {};				
+				var wrapper = {};
 				var tags = userInfo.tags.replace(/,\s/g, ',');
 
 				var tagList = tags.split(',');
@@ -177,7 +201,7 @@ module.exports = function(app, db) {
 						$like: '%' + tag + '%'
 					};
 
-					orOper.push(wrapper);
+					orOper.push(wrapper);					
 				});
 
 				return db.Poll.findAll({
@@ -185,11 +209,17 @@ module.exports = function(app, db) {
 					limit: 10,
 					offset: offset,
 					include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
-				});
+				})
 			} else {
-				return null;
+				return [];
 			}
 		}).then(polls => {
+			attendedPollIds.forEach(function(attendedPollId) {
+				polls.forEach(function(poll) {
+					if(attendedPollId == poll.id) poll.dataValues.isAttended = true;
+				})
+			})
+
 			res.send(polls);
 		}).catch(error => {
 			throw error;
@@ -200,14 +230,30 @@ module.exports = function(app, db) {
 	 * Poll Index with LIMIT API (Top 100)
 	 */
 	app.get('/polls/top/:limit', function(req, res) {
-		db.Poll.findAll({
-			order: [
-				['count', 'desc']
-			],
-			limit: parseInt(req.params.limit),
-			include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
-		}).then( polls => {
-			res.status(200).send(polls);
+		var attendedPollIds = [];
+
+		db.PollHistory.findAll({
+			where: { userId: req.session.userId }
+		}).then(pollHistories => {
+			pollHistories.forEach(function(pollHistory) {
+				attendedPollIds.push(pollHistory.pollId);				
+			});
+
+			return db.Poll.findAll({
+				order: [
+					['count', 'desc']
+				],
+				limit: parseInt(req.params.limit),
+				include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
+			})
+		}).then(polls => {
+			attendedPollIds.forEach(function(attendedPollId) {
+				polls.forEach(function(poll) {
+					if(attendedPollId == poll.id) poll.dataValues.isAttended = true;
+				});
+			});
+
+			res.send(polls);
 		}).catch(error => {
 			throw error;
 		})
@@ -240,7 +286,6 @@ module.exports = function(app, db) {
 				options: options
 			});
 		}).catch(error => {
-			console.error(error);
 			throw error;
 		})
 	}),
@@ -252,8 +297,7 @@ module.exports = function(app, db) {
 		db.Poll.update(req.body, { where: req.params}).then(poll => {
 			res.send(poll);
 		}).catch(error => {
-			console.error(error);
-			res.send(false);
+			throw error;
 		})
 	}),
 
@@ -283,8 +327,7 @@ module.exports = function(app, db) {
 		}).then(() => {
 			res.send(true);
 		}).catch(error => {
-			console.error(error);
-			res.send(false);
+			throw error;
 		})
 	}),
 
@@ -365,7 +408,6 @@ module.exports = function(app, db) {
 			res.send(true);
 		}).catch(error => {
 			throw error;
-			console.error(error);
 		})
 	})
 };

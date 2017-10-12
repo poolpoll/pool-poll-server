@@ -14,6 +14,10 @@ module.exports = function(sequelize, Sequelize) {
 		userId: {
 			type: Sequelize.INTEGER,
 			allowNull: false
+		},
+		commentDetailCount: {
+			type: Sequelize.INTEGER,
+			defaultValue: 0
 		}
 	}, {
 		indexes: [{
