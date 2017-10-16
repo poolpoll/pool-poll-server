@@ -41,6 +41,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
  */
 const db = require('./config/db.js');
 const CrudUtil = require('./utils/CrudUtil');
+const SchedulerUtil = require('./utils/SchedulerUtil')(db);
 
 const requestFilter = require('./filters/requestFilter')(app);
 const menuController = require('./controllers/menuController')(app, db);
@@ -48,6 +49,7 @@ const userController = require('./controllers/userController')(app, db);
 const authController = require('./controllers/authController')(app, db);
 const pollController = require('./controllers/pollController')(app, db);
 const pollHistoryController = require('./controllers/pollHistoryController')(app, db);
+const likeHistoryController = require('./controllers/likeHistoryController')(app, db);
 const optionController = require('./controllers/optionController')(app, db);
 const commentController = require('./controllers/commentController')(app, db);
 const commentDetailController = require('./controllers/commentDetailController')(app, db);

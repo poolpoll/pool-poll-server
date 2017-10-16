@@ -20,6 +20,7 @@ const db = {
 db.Menu = require('../models/Menu')(sequelize, Sequelize);
 db.Poll = require('../models/Poll')(sequelize, Sequelize);
 db.PollHistory = require('../models/PollHistory')(sequelize, Sequelize);
+db.LikeHistory = require('../models/LikeHistory')(sequelize, Sequelize);
 db.Comment = require('../models/Comment')(sequelize, Sequelize);
 db.CommentDetail = require('../models/CommentDetail')(sequelize, Sequelize);
 db.Option = require('../models/Option')(sequelize, Sequelize);

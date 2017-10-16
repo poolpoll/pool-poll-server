@@ -33,7 +33,8 @@ module.exports = function(app, db) {
 	      mimeType: fileInfo.mimetype,
 	      path: fileInfo.path,
 	      size: fileInfo.size,
-	      tags: 'mainthumbnail'
+	      tags: 'mainthumbnail',
+	      activeFlag: true
 			}).then(attachment => {
 				poll.attachmentId = attachment.id;
 
@@ -131,6 +132,9 @@ module.exports = function(app, db) {
 						tags: {
 							$like: '%' + name + '%'
 						}
+					},
+					$and: {
+						activeFlag: true
 					}
 				},
 				limit: 10,
@@ -165,7 +169,10 @@ module.exports = function(app, db) {
 			include: [{
 				model: db.User,
 				attributes: ['name', 'level', 'attachmentId']
-			}]
+			}],
+			order: [
+				['id']
+			],			
 		}).then(function(polls) {
 			res.send(polls);
 		}).catch(error => {
@@ -182,7 +189,7 @@ module.exports = function(app, db) {
 		var attendedPollIds = [];
 
 		db.PollHistory.findAll({
-			where: {userId: req.session.userId}
+			where: { userId: req.session.userId }
 		}).then(pollHistories => {
 			pollHistories.forEach(function(pollHistory) {
 				attendedPollIds.push(pollHistory.pollId);				
@@ -205,7 +212,7 @@ module.exports = function(app, db) {
 				});
 
 				return db.Poll.findAll({
-					where: { $or: orOper },
+					where: { $or: orOper, activeFlag: true },
 					limit: 10,
 					offset: offset,
 					include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
@@ -243,6 +250,9 @@ module.exports = function(app, db) {
 				order: [
 					['count', 'desc']
 				],
+				where: {
+					 activeFlag: true
+				},
 				limit: parseInt(req.params.limit),
 				include: [{ model: db.User, attributes: ['name', 'level', 'attachmentId']}]
 			})
@@ -264,6 +274,7 @@ module.exports = function(app, db) {
 	 */
 	app.get('/polls/:id', function(req, res) {
 		var poll;
+		var options;
 
 		db.Poll.find({
 			where: req.params,
@@ -280,11 +291,27 @@ module.exports = function(app, db) {
 				},
 				order: [['id', 'desc']]
 			})
-		}).then(options => {
-			res.send({
+		}).then(result => {
+			options = result;
+
+			return db.LikeHistory.findOne({
+				where: {
+					pollId: poll.id,
+					userId: req.session.userId
+				}
+			})
+		}).then(likeHistory => {
+			var result = {
 				poll: poll,
-				options: options
-			});
+				options: options,
+				like: false
+			};
+
+			if(likeHistory) {
+				result.like = likeHistory;
+			};
+
+			res.send(result);
 		}).catch(error => {
 			throw error;
 		})
