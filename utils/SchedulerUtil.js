@@ -5,6 +5,56 @@ var schedule = require('node-schedule');
 
 module.exports = function(db) {
 	/**
+	 * Poll Expire Job Daily
+	 * 매일 자정에 마감일이 전날인 설문을 Deactivate
+	 */
+	var pollDeactivateJobDaily = schedule.scheduleJob('0 0 * * *', function() {
+		var currentDate = new Date();
+		var yesterDay = new Date(currentDate.setDate(currentDate.getDate() - 1));
+		var isoYesterDay = yesterDay.toISOString();
+		yesterDay = isoYesterDay.slice(0, 10);
+
+		db.Poll.findAll({
+			where: {
+				expireDate: yesterDay,
+				activeFlag: true
+			}
+		}).then(notExpiredPolls => {
+			if(notExpiredPolls && notExpiredPolls.length > 0) {
+				console.log('');
+				console.log('**************************************');
+				console.log('There are ' + notExpiredPolls.length + ' polls not expired!');
+				console.log('Deactivate missed polls');
+				console.log('**************************************');
+				console.log('');
+
+				notExpiredPolls.forEach(function(notExpiredPoll) {
+					console.log('');
+					console.log('Poll ID: ' + notExpiredPoll.id);
+					console.log('Poll Name: ' + notExpiredPoll.name)
+					console.log('');
+
+					db.Poll.update({
+						activeFlag: false
+					}, {
+						where: {
+							id: notExpiredPoll.id
+						}
+					}).then(expiredPoll => {
+						console.log('');
+						console.log(notExpiredPoll.name + ' is successfully Deactivated.');
+						console.log('');
+					}).catch(error => {
+						throw error;
+					})
+				})
+			}
+		}).catch(error => {
+			throw error;
+		})
+	});
+
+	/**
 	 * Poll Expire Job
 	 * 10분에 한번씩 만료된 설문을 찾아 Deactivate
 	 */
