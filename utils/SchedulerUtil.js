@@ -68,7 +68,7 @@ module.exports = function(db) {
 		console.log('**************************************');
 		console.log('Poll Deactivation Scheduler is Running');
 		console.log('Find out Expired Polls');
-		console.log('Scheduler lanched at ' + currentDate.toDateString() + ' ' + currentDate.toTimeString());
+		console.log('Scheduler launched at ' + currentDate.toDateString() + ' ' + currentDate.toTimeString());
 		console.log('**************************************');
 		console.log('');		
 

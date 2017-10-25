@@ -13,10 +13,21 @@ module.exports = function(app, db) {
 			where: req.params,
 			include: [ db.Attachment ]
 		}).then(function(user) {
-			res.status(200).send(user);
+			var data = {
+				id: user.id,
+				attachmentId: user.attachmentId,
+				birthDate: user.birthDate,
+				coin: user.coin,
+				createdAt: user.createdAt,
+				email: user.email,
+				level: user.id,
+				name: user.name,
+				tags: user.tags
+			};
+
+			res.send(data);
 		}).catch(error => {
-			console.error(error);
-			res.status(500).send(false);
+			throw error;
 		})
 	});
 
