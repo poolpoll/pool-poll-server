@@ -5,6 +5,7 @@ var express = require("express");
 var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
+var cors = require("cors");
 
 var app = express();
 
@@ -19,9 +20,11 @@ app.use(
   })
 );
 
+// app.use(cors());
+
 app.use(function(req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+  res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8081");
   // Request methods you wish to allow
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -48,6 +51,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
  * Routes
  */
 const db = require("./config/db.js");
+const config = require("./config/config");
+
 require("./utils/CrudUtil");
 require("./utils/SchedulerUtil")(db);
 
@@ -66,6 +71,6 @@ require("./controllers/attachmentController")(app, db);
 /**
  * Custom Module Attache Section
  */
-app.listen(3000, function() {
-  console.log("Server running on port 3000");
+app.listen(config.APP.PORT, function() {
+  console.log("Server running on port " + config.APP.PORT);
 });

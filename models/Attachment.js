@@ -4,9 +4,8 @@
 module.exports = function(sequelize, Sequelize) {
   const Attachment = sequelize.define("attachments", {
     id: {
-      type: Sequelize.STRING(255),
-      allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      type: Sequelize.UUID
     },
     storage: {
       type: Sequelize.STRING(255)

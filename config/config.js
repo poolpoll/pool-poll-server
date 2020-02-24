@@ -1,11 +1,15 @@
 const CONFIG = {
+  APP: {
+    PORT: 3500
+  },
   DB: {
     DIALECT: "mysql",
     HOST: "localhost",
     PORT: "3306",
     DATABASE: "free_poll_dev",
     USER: "root",
-    PASSWORD: "1"
+    PASSWORD: "1",
+    sync: true
   },
 
   ATTACHMENT: {

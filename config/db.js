@@ -21,6 +21,10 @@ const db = {
   sequelize: sequelize
 };
 
+sequelize.sync({
+  force: CONF.DB.SYNC
+});
+
 // Model List
 db.Attachment = require("../models/Attachment")(sequelize, Sequelize);
 db.User = require("../models/User")(sequelize, Sequelize);
